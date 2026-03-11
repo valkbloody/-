@@ -26,12 +26,19 @@ namespace фапра
 
         // Пути файлов
         private List<string> paths = new List<string>();
-
         //Ошибки в файлах
-        private List<string> errors = new List<string>();
+        public List<Error_page> errors = new List<Error_page>();
         public Lang_procc()
         {
             InitializeComponent();
+            // только для сканера
+            error_grid.Columns[0].HeaderText = "Условный код";
+            error_grid.Columns[1].HeaderText = "Тип лексемы";
+            error_grid.Columns[1].Width = 200;
+            error_grid.Columns[2].HeaderText = "Лексема";
+            error_grid.Columns[2].Width = 200;
+            error_grid.Columns[3].HeaderText = "Местоположение";
+
         }
         
         // Пункт меню Правка
@@ -65,7 +72,18 @@ namespace фапра
         {
             SendKeys.Send("^Y");
         }
-        
+        public void add_error()
+        {
+            Error_page newerror = new Error_page();
+            errors.Add(newerror);
+        }
+        private void clear_errors(int id)
+        {
+            errors[id].path.Clear();
+            errors[id].line.Clear();
+            errors[id].column.Clear();
+            errors[id].message.Clear();
+        }
         // Создание страницы Tabpage для работы с файлом
         private TabPage New_tabpage1(string name = "Новый документ") 
         {
@@ -94,7 +112,7 @@ namespace фапра
             save_file_but.Enabled = true;
             start_but.Enabled = true;   
             paths.Add(" ");
-            errors.Add(" ");
+            add_error();
             return my_tab;
 
         }
@@ -138,9 +156,12 @@ namespace фапра
             RichTextBox edit_box = numstr_obj as RichTextBox;
             numstr_obj = programs.SelectedTab.GetChildAtPoint(new Point(4, 4));
             RichTextBox num_str = numstr_obj as RichTextBox;
-            edit_box.Width = programs.Width - edit_box.Location.X;
-            edit_box.Height = programs.Height - 50;
-            num_str.Height = edit_box.Height;
+            if (edit_box != null && num_str != null)
+            {
+                edit_box.Width = programs.Width - edit_box.Location.X;
+                edit_box.Height = programs.Height - 50;
+                num_str.Height = edit_box.Height;
+            }
         }
         //Пункт меню Файл
         private void newfile(object sender, EventArgs e)
@@ -183,29 +204,46 @@ namespace фапра
         // Кнопка Пуск
         private void start(object sender, EventArgs e)
         {
-            object numstr_obj = programs.SelectedTab.GetChildAtPoint(new Point(50, 50));
-            RichTextBox edit_box = numstr_obj as RichTextBox;
-            errors[programs.SelectedIndex] = " ";
-            error_grid.Rows.Clear();
-            if (edit_box.Text.Length == 0)
+            try
             {
-                error_grid.Rows.Add(textBox1.Text, 0, 0, "Пустой файл!");
-                errors[programs.SelectedIndex] += $"{textBox1.Text}@0@0@Пустой файл!#";
+                object numstr_obj = programs.SelectedTab.GetChildAtPoint(new Point(50, 50));
+                RichTextBox edit_box = numstr_obj as RichTextBox;
+                error_grid.Rows.Clear();
+                //создание сканера
+                Scanner scanner = new Scanner();
+                List<Lexema> lixemas = scanner.analyze(edit_box.Text);
+                //сначала лексемы
+                foreach (Lexema lexema in lixemas)
+                {
+                    error_grid.Rows.Add(lexema.id, lexema.type, lexema.name, lexema.location);
+                }
+                int selpage = programs.SelectedIndex;
+                errors.RemoveAt(selpage);
+                errors.Insert(selpage, scanner.Errors);
+                //потом ошибки
+                for (int i = 0; i < errors[selpage].column.Count; i++)
+                {
+                    error_grid.Rows.Add(errors[selpage].path[i], errors[selpage].line[i], errors[selpage].column[i], errors[selpage].message[i]);
+                }
+                this.Refresh();
             }
-            MessageBox.Show("Здесь пуск вашей программы");
-            
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
         // Обработчик событий переключениия между вкладок
         private void programs_SelectedIndexChanged(object sender, EventArgs e)
         {
             textBox1.Text = paths[programs.SelectedIndex];
             error_grid.Rows.Clear();
-            foreach(string progr in errors[programs.SelectedIndex].Split('#'))
+            Error_page errors_on_page = errors[programs.SelectedIndex];
+            for(int i = 0; i < errors_on_page.message.Count;i++)
             {
-                if (progr != " " && progr != "")
+                if (errors_on_page.message[i] != " " && errors_on_page.message[i] != "")
                 {
-                    string[] err = progr.Split('@');
-                    error_grid.Rows.Add(err[0], err[1], err[2], err[3]);
+                    error_grid.Rows.Add(errors_on_page.path[i], errors_on_page.line[i], 
+                        errors_on_page.column[i], errors_on_page.message[i]);
                 }
             }
         }
@@ -507,7 +545,47 @@ namespace фапра
             openFileDialog1.ShowDialog();
 
         }
+        private void error_grid_CellClick_1(object sender, DataGridViewCellEventArgs e)
+        {
+            object numstr_obj = programs.TabPages[programs.TabPages.Count - 1].GetChildAtPoint(new Point(50, 50));
+            RichTextBox edit_box = numstr_obj as RichTextBox;
+            edit_box.Focus();
+            string pos = error_grid.Rows[e.RowIndex].Cells[3].Value.ToString();
+            string row_numstr = pos.Split(' ')[1];
+            row_numstr = row_numstr.Split(',')[0];
+            int row_num = Convert.ToInt32(row_numstr);
+            string inline = pos.Split(' ')[2];
+            int positioninstr = Convert.ToInt32(inline.Split('-')[0]);
+            edit_box.Select(edit_box.GetFirstCharIndexFromLine(row_num-1)+positioninstr-1,1);
+        }
+    }
+    public class Error_page
+    {
+        /// <summary>
+        /// Класс который представляет ошибки
+        /// </summary>
+        public List<string> path = new List<string>(); // путь
 
+        public List<int> line = new List<int>(); // линия
+
+        public List<int> column = new List<int>(); // колонка
+
+        public List<string> message = new List<string>(); // сообщение
+        public Error_page()
+        {
+
+        }
+        public Error_page(string path, int line, int column, string message) 
+        {
+            addError(path, line, column, message);
+        }
+        public void addError(string path = "", int line = 0, int column = 0, string message = "")
+        {
+            this.path.Add(path);
+            this.line.Add(line);
+            this.column.Add(column);
+            this.message.Add(message);
+        }
     }
 }
 

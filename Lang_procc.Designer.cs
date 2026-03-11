@@ -102,7 +102,7 @@ namespace фапра
             // 
             // menuStrip1
             // 
-            this.menuStrip1.BackColor = System.Drawing.SystemColors.ControlLight;
+            this.menuStrip1.BackColor = System.Drawing.SystemColors.Control;
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.файлToolStripMenuItem,
             this.правкаToolStripMenuItem,
@@ -364,7 +364,7 @@ namespace фапра
             // toolStrip1
             // 
             this.toolStrip1.AutoSize = false;
-            this.toolStrip1.BackColor = System.Drawing.SystemColors.ControlDark;
+            this.toolStrip1.BackColor = System.Drawing.SystemColors.Control;
             this.toolStrip1.GripMargin = new System.Windows.Forms.Padding(1, 2, 2, 1);
             this.toolStrip1.ImageScalingSize = new System.Drawing.Size(50, 50);
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -522,6 +522,7 @@ namespace фапра
             this.textBox1.ReadOnly = true;
             this.textBox1.Size = new System.Drawing.Size(280, 20);
             this.textBox1.TabIndex = 4;
+            this.textBox1.Visible = false;
             // 
             // label1
             // 
@@ -531,6 +532,7 @@ namespace фапра
             this.label1.Size = new System.Drawing.Size(31, 13);
             this.label1.TabIndex = 5;
             this.label1.Text = "Путь";
+            this.label1.Visible = false;
             // 
             // dexter
             // 
@@ -586,6 +588,7 @@ namespace фапра
             this.error_grid.AllowUserToDeleteRows = false;
             this.error_grid.AllowUserToResizeColumns = false;
             this.error_grid.AllowUserToResizeRows = false;
+            this.error_grid.BackgroundColor = System.Drawing.SystemColors.Control;
             this.error_grid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.error_grid.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.Column1,
@@ -598,6 +601,7 @@ namespace фапра
             this.error_grid.RowHeadersVisible = false;
             this.error_grid.Size = new System.Drawing.Size(948, 163);
             this.error_grid.TabIndex = 3;
+            this.error_grid.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.error_grid_CellClick_1);
             // 
             // Column1
             // 
