@@ -26,6 +26,7 @@ namespace фапра
 
         // Пути файлов
         private List<string> paths = new List<string>();
+
         //Ошибки в файлах
         public List<Error_page> errors = new List<Error_page>();
         public Lang_procc()
@@ -38,6 +39,7 @@ namespace фапра
             error_grid.Columns[2].HeaderText = "Лексема";
             error_grid.Columns[2].Width = 200;
             error_grid.Columns[3].HeaderText = "Местоположение";
+            change_font(this, 12);
 
         }
         
@@ -100,6 +102,7 @@ namespace фапра
             code.MouseClick += edit_box_TextChanged;
             code.KeyDown += edit_box_Keydown;
             code.ScrollBars = RichTextBoxScrollBars.Both;
+            code.MinimumSize = new Size(500,60);
             RichTextBox strings = new RichTextBox(); // Номер строк
             my_tab.Controls.Add(strings);
             strings.Location = new System.Drawing.Point(3, 3);
@@ -161,6 +164,8 @@ namespace фапра
                 edit_box.Width = programs.Width - edit_box.Location.X;
                 edit_box.Height = programs.Height - 50;
                 num_str.Height = edit_box.Height;
+                error_grid.Width = programs.Width - error_grid.Location.X;
+                error_grid.Height = this.Height - edit_box.Height - edit_box.Top;
             }
         }
         //Пункт меню Файл
@@ -213,18 +218,19 @@ namespace фапра
                 Scanner scanner = new Scanner();
                 List<Lexema> lixemas = scanner.analyze(edit_box.Text);
                 //сначала лексемы
-                foreach (Lexema lexema in lixemas)
-                {
-                    error_grid.Rows.Add(lexema.id, lexema.type, lexema.name, lexema.location);
-                }
                 int selpage = programs.SelectedIndex;
                 errors.RemoveAt(selpage);
                 errors.Insert(selpage, scanner.Errors);
                 //потом ошибки
                 for (int i = 0; i < errors[selpage].column.Count; i++)
                 {
-                    error_grid.Rows.Add(errors[selpage].path[i], errors[selpage].line[i], errors[selpage].column[i], errors[selpage].message[i]);
+                    error_grid.Rows.Add(errors[selpage].line[i],"лексическая ошибка" ,errors[selpage].path[i], errors[selpage].message[i]);
                 }
+                foreach (Lexema lexema in lixemas)
+                {
+                    error_grid.Rows.Add(lexema.id, lexema.type, lexema.name, lexema.location);
+                }
+                if (errors[selpage].column.Count == 0) MessageBox.Show("Ошибок не обнаружено!");
                 this.Refresh();
             }
             catch (Exception ex)
@@ -283,15 +289,21 @@ namespace фапра
         {
             float size = paste_but.Font.Size;
             Size begin_size = this.Size;
-            change_font(this, size + 1);
-            this.Size = begin_size;
-            toolStripStatusLabel1.Text = $"Шрифт: Segoe UI {size + 1}pt";
+            if (size < 20.0)
+            {
+                change_font(this, size + 1);
+                this.Size = begin_size;
+                toolStripStatusLabel1.Text = $"Шрифт: Segoe UI {size + 1}pt";
+            }
         }
         private void text_changes_minus(object sender, EventArgs e)
         {
             float size = paste_but.Font.Size;
-            change_font(this, size - 1);
-            toolStripStatusLabel1.Text = $"Шрифт: Segoe UI {size - 1}pt";
+            if (size > 11.0)
+            {
+                change_font(this, size - 1);
+                toolStripStatusLabel1.Text = $"Шрифт: Segoe UI {size - 1}pt";
+            }
         }
         private void change_font(Control control, float size)
         {
@@ -503,6 +515,11 @@ namespace фапра
                         backfillkeywords(text_box,curr_pos, word.Length);
                         e.Handled = true;
                         break;
+                    case "func":
+                        curr_pos = text_box.GetFirstCharIndexFromLine(curr_row) + text_box.Lines[curr_row].IndexOf(word);
+                        backfillkeywords(text_box, curr_pos, word.Length);
+                        e.Handled = true;
+                        break;
                     case "float":
                         curr_pos = text_box.GetFirstCharIndexFromLine(curr_row) + text_box.Lines[curr_row].IndexOf(word);
                         backfillkeywords(text_box, curr_pos, word.Length);
@@ -547,16 +564,19 @@ namespace фапра
         }
         private void error_grid_CellClick_1(object sender, DataGridViewCellEventArgs e)
         {
-            object numstr_obj = programs.TabPages[programs.TabPages.Count - 1].GetChildAtPoint(new Point(50, 50));
-            RichTextBox edit_box = numstr_obj as RichTextBox;
-            edit_box.Focus();
-            string pos = error_grid.Rows[e.RowIndex].Cells[3].Value.ToString();
-            string row_numstr = pos.Split(' ')[1];
-            row_numstr = row_numstr.Split(',')[0];
-            int row_num = Convert.ToInt32(row_numstr);
-            string inline = pos.Split(' ')[2];
-            int positioninstr = Convert.ToInt32(inline.Split('-')[0]);
-            edit_box.Select(edit_box.GetFirstCharIndexFromLine(row_num-1)+positioninstr-1,1);
+            if (e.RowIndex >= 0)
+            {
+                object numstr_obj = programs.TabPages[programs.TabPages.Count - 1].GetChildAtPoint(new Point(50, 50));
+                RichTextBox edit_box = numstr_obj as RichTextBox;
+                edit_box.Focus();
+                string pos = error_grid.Rows[e.RowIndex].Cells[3].Value.ToString();
+                string row_numstr = pos.Split(' ')[1];
+                row_numstr = row_numstr.Split(',')[0];
+                int row_num = Convert.ToInt32(row_numstr);
+                string inline = pos.Split(' ')[2];
+                int positioninstr = Convert.ToInt32(inline.Split('-')[0]);
+                edit_box.Select(edit_box.GetFirstCharIndexFromLine(row_num - 1) + positioninstr - 1, 1);
+            }
         }
     }
     public class Error_page

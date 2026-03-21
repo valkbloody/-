@@ -74,13 +74,8 @@ namespace фапра
                 {
                     //начало обработки лексемы
                     case States.S:
-                        if (cym == '\0')
+                        if (cym == '\0' || cym == ' ')
                         {
-                            getNext();
-                        }
-                        else if (cym == ' ')
-                        {
-                            AddLexema(0, "разделитель пробел", cym.ToString(), curr_line);
                             getNext();
                         }
                         else if (cym == '\n')
@@ -185,16 +180,12 @@ namespace фапра
                     case States.ERR:
                         addError(buf, curr_line);
                         clearbuf();
-                        getNext();
-                        cur_state = States.S;
+                        cur_state = States.FIN;
                         break;
                     case States.FIN:
                         break;
                 }
             }
-
-
-
             return lexems;
         }
         private int find_key_word(string buf)
@@ -254,8 +245,7 @@ namespace фапра
         }
         public void addError(string buf, int curr_line)
         {
-            string mess = "Недопустимый символ: " + buf;
-            errors.addError(mess, 0, 0, getLocation(buf, curr_line));
+            errors.addError(buf, -1, 0, getLocation(buf, curr_line));
         }
     }
 }
