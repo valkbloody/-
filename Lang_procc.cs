@@ -35,9 +35,9 @@ namespace фапра
             // только для сканера
             error_grid.Columns[0].HeaderText = "Условный код";
             error_grid.Columns[1].HeaderText = "Тип лексемы";
-            error_grid.Columns[1].Width = 200;
+            error_grid.Columns[1].Width = 350;
             error_grid.Columns[2].HeaderText = "Лексема";
-            error_grid.Columns[2].Width = 200;
+            error_grid.Columns[2].Width = 350;
             error_grid.Columns[3].HeaderText = "Местоположение";
             change_font(this, 12);
 
@@ -221,15 +221,30 @@ namespace фапра
                 int selpage = programs.SelectedIndex;
                 errors.RemoveAt(selpage);
                 errors.Insert(selpage, scanner.Errors);
-                //потом ошибки
-                for (int i = 0; i < errors[selpage].column.Count; i++)
+                if (errors[selpage].path.Count == 0)
                 {
-                    error_grid.Rows.Add(errors[selpage].line[i],"лексическая ошибка" ,errors[selpage].path[i], errors[selpage].message[i]);
+                    Parser parser = new Parser();
+                    parser.Parse(lixemas);
+                    errors[selpage].addErrors(parser.Errors.path, parser.Errors.line, parser.Errors.column, parser.Errors.message);
+                    //потом ошибки
+                    for (int i = 0; i < errors[selpage].column.Count; i++)
+                    {
+                        error_grid.Rows.Add(errors[selpage].line[i], "синтаксическая ошибка", errors[selpage].path[i], errors[selpage].message[i]);
+                    }
                 }
-                foreach (Lexema lexema in lixemas)
+                else
                 {
-                    error_grid.Rows.Add(lexema.id, lexema.type, lexema.name, lexema.location);
+                    //потом ошибки
+                    for (int i = 0; i < errors[selpage].column.Count; i++)
+                    {
+                        error_grid.Rows.Add(errors[selpage].line[i], "лексическая ошибка", errors[selpage].path[i], errors[selpage].message[i]);
+                    }
                 }
+                    toolStripStatusLabel3.Text = "Количенство ошибок: " + error_grid.Rows.Count;
+                //foreach (Lexema lexema in lixemas)
+                //{
+                //    error_grid.Rows.Add(lexema.id, lexema.type, lexema.name, lexema.location);
+                //}
                 if (errors[selpage].column.Count == 0) MessageBox.Show("Ошибок не обнаружено!");
                 this.Refresh();
             }
@@ -605,6 +620,16 @@ namespace фапра
             this.line.Add(line);
             this.column.Add(column);
             this.message.Add(message);
+        }
+        public void addErrors(List<string> path, List<int> line, List<int> column, List<string> message)
+        {
+            for (int i = 0; i < path.Count; i++)
+            {
+                this.path.Add(path[i]);
+                this.line.Add(line[i]);
+                this.column.Add(column[i]);
+                this.message.Add(message[i]);
+            }
         }
     }
 }
