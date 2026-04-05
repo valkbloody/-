@@ -37,7 +37,7 @@ namespace фапра
             error_grid.Columns[1].HeaderText = "Тип лексемы";
             error_grid.Columns[1].Width = 350;
             error_grid.Columns[2].HeaderText = "Лексема";
-            error_grid.Columns[2].Width = 350;
+            error_grid.Columns[2].Width = 450;
             error_grid.Columns[3].HeaderText = "Местоположение";
             change_font(this, 12);
 
@@ -593,43 +593,13 @@ namespace фапра
                 edit_box.Select(edit_box.GetFirstCharIndexFromLine(row_num - 1) + positioninstr - 1, 1);
             }
         }
-    }
-    public class Error_page
-    {
-        /// <summary>
-        /// Класс который представляет ошибки
-        /// </summary>
-        public List<string> path = new List<string>(); // путь
 
-        public List<int> line = new List<int>(); // линия
-
-        public List<int> column = new List<int>(); // колонка
-
-        public List<string> message = new List<string>(); // сообщение
-        public Error_page()
+        private void тестовыйПримерToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
-        }
-        public Error_page(string path, int line, int column, string message) 
-        {
-            addError(path, line, column, message);
-        }
-        public void addError(string path = "", int line = 0, int column = 0, string message = "")
-        {
-            this.path.Add(path);
-            this.line.Add(line);
-            this.column.Add(column);
-            this.message.Add(message);
-        }
-        public void addErrors(List<string> path, List<int> line, List<int> column, List<string> message)
-        {
-            for (int i = 0; i < path.Count; i++)
-            {
-                this.path.Add(path[i]);
-                this.line.Add(line[i]);
-                this.column.Add(column[i]);
-                this.message.Add(message[i]);
-            }
+            new_file_but.PerformClick();
+            object numstr_obj = programs.TabPages[programs.TabPages.Count - 1].GetChildAtPoint(new Point(50, 50));
+            RichTextBox edit_box = numstr_obj as RichTextBox;
+            edit_box.Text = "Func<int, int, int, int> calc = (a, b, c) => a + (b * c);";
         }
     }
 }

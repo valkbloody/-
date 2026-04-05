@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using фапра.States;
 
 namespace фапра
 {
@@ -27,285 +29,305 @@ namespace фапра
         {
             get { return errors; }
         }
-
-        private List<string> arith_exp = new List<string> { }; // выражение арифмитическое в ПОЛИС
-
-        private List<char> opes = new List<char> { ' ' };  // буфет знаков для алгоритма Дейкстры
-
-        private int errors_flag = 0; // 0 - знак, 1 - переменная ключ на ошибки
-
-        private int brc_flag = 0; // ключ на скобки
-
-        private List<string> brcs_pos = new List<string> { };  // позиция скобок
-        //проверка приортета двух символов алг. Дейкстры      
-        private bool IsBigger(char adding, char last_in)
-            
+ 
+      
+        private bool ExcpectedError(string exp_str)
         {
-            int p1 = priority(adding),
-                p2 = priority(last_in);
-            if (p1 == 0 || p1 > p2) return true;
-            else return false;
-        }
-        //проверка приортета двух символов для выталкивания алг. Дейкстры     
-        private bool IsBiggerOrEq(char adding, char last_in)
-        {
-            int p1 = priority(adding),
-                p2 = priority(last_in);
-            if (p1 <= p2) return true;
-            else return false;
-        }
-        // приоритет знаков
-        private int priority(char op)
-        {
-            switch (op)
+            if (!CANgetnext)
             {
-                case '+':
-                    return 7;
-                case '*':
-                    return 8;
-                case '(':
-                    return 0;
-                case ')':
-                    return 1;
+                errors.addError($"Ожидалось {exp_str}, но не было получено", -1, 0, cur_lexem.location);
+                return true;
             }
-            return -1;
-        }
-        // Проверка корректности арифм. выражения.
-        private int arith_oper()
-        {
-            if (cur_lexem.id == 3) // переменная
-            {
-                if (errors_flag == 1) // две подряд
-                {
-                    addError("Ожидался оператор, встречен идентификатор: " + cur_lexem.name, cur_lexem.location);
-                    return 0;
-                }
-                arith_exp.Add(cur_lexem.name);
-                errors_flag = 1;
-                return 0;
-            }
-            else if (cur_lexem.id == 11 ||  // *
-                cur_lexem.id == 10 ||       // +
-                cur_lexem.id == 6 ||        // (
-                cur_lexem.id == 7)          // )
-            {
-                if (cur_lexem.id == 11 || cur_lexem.id == 10) // оператор
-                {
-                    if (errors_flag == 0) // два подряд
-                    {
-                        addError("Ожидался инденификатор, встречен знак: " + cur_lexem.name, cur_lexem.location);
-                        return 0;
-                    }
-                    errors_flag = 0;
-                }
-                if (cur_lexem.id == 6) // (
-                {
-                    brc_flag++;
-                    brcs_pos.Add(" +"+cur_lexem.location);
-                    if (errors_flag == 1)
-                    {
-                        addError("Отсутствует знак до открывающей скобки. ", cur_lexem.location);
-                        errors_flag = 0;
-                    }
-                }
-                if (cur_lexem.id == 7) // )
-                {
-                    brc_flag--;
-                    brcs_pos.Add(" -" + cur_lexem.location);
-                    if (errors_flag == 0)
-                    {
-                        addError("Отсутствует идентфикатор до закрывающей скобки. ", cur_lexem.location);
-                        errors_flag = 1;
-                    }
-                }
-                if (IsBigger(cur_lexem.name[0], opes[opes.Count - 1]) || opes.Count == 1) // доб. в буфер знаков
-                {
-                    if (opes[opes.Count - 1] == '(' && cur_lexem.id == 7) addError("Присутствуют незначащие скобки", cur_lexem.location);
-                    opes.Add(cur_lexem.name[0]);
-                }
-                else
-                {
-                    while (IsBiggerOrEq(cur_lexem.name[0], opes[opes.Count - 1])) // выталкиваем знак из символа
-                    {
-                        arith_exp.Add(opes[opes.Count - 1].ToString());
-                        opes.RemoveAt(opes.Count - 1);
-                    }
-                    if (opes[opes.Count - 1] == '(' && cur_lexem.id == 7)
-                    {
-                        opes.RemoveAt(opes.Count - 1);
-                    }
-                    else opes.Add(cur_lexem.name[0]);
-                }
-                return 0;
-            }
-            else
-            {
-                if (cur_lexem.id != 13)
-                {
-                    addError("Ожидалось арифмтическое выражение. Встречено: " + cur_lexem.name,cur_lexem.location);
-                    return 0;
-                }
-            }
-            // конец символ ; проверка на ошибки или дозапись оставшихся знаков в arith_ops
-            if (brc_flag > 0) num_brcs_err(1);
-            else if (brc_flag < 0) num_brcs_err(-1);
-            if (arith_exp.Count < 2) 
-                    {
-                addError("Ожидается арифмитическое выражение, встречено: "+ cur_lexem.name,cur_lexem.location);
-                return 0;
-            }
-            if (errors_flag != 1) addError("Встречен лишний знак: " + opes[opes.Count - 1], list_lexems[list_lexems.Count - 2].location);
-                    else
-                        while (opes.Count > 1)
-                        {
-                            arith_exp.Add(opes[opes.Count - 1].ToString());
-                            opes.RemoveAt(opes.Count - 1);
-                        }
-            return 0;
-        }
-        // ошибка колечества скобок ( != )
-        private void num_brcs_err(int key)
-        {
-            int k = 0;
-            if (key == 1)
-            {
-                for (int i = 0; i < brc_flag; i++)
-                {
-                    for (int j = k; j < brcs_pos.Count; j++)
-                        if (brcs_pos[j][1] == '+')
-                        {
-                            addError("Лишняя открывающая скобка", brcs_pos[j].Split('+')[1]);
-                            k = j + 1;
-                            break;
-                        }
-                }
-            }
-            else
-            {
-                k = brcs_pos.Count - 1;
-                for (int i = 0; i < -brc_flag; i++)
-                {
-                    for (int j = k; j >= 0; j++)
-                        if (brcs_pos[j][1] == '-')
-                        {
-                            addError("Лишняя закрывающая скобка", brcs_pos[j].Split('-')[1]);
-                            k = j - 1;
-                            break;
-                        }
-                }
-            }
+            return false;
         }
         // осн. функция парсера
         public void Parse(List<Lexema> lexems)
         {
-                list_lexems = lexems;
-                while (cur_state != Vn.END)
-                {
-                    switch (cur_state)
-                    {
-                        case Vn.Z: // func
-                            getnext();
-                        if (cur_lexem.id == 2) cur_state = Vn.A;
-                        else
-                        {
-                            cur_state = Vn.ERR;
-                            addError("Ожидалось func, встречено: " + cur_lexem.name, cur_lexem.location);
-                        }
-                            break;
-                        case Vn.X: // арифм. выражение
-                            getnext();
-                            arith_oper();
-                            if (cur_lexem.id == 13) cur_state = Vn.END;
-                            break;
-                    case Vn.A: // <
-                        getnext();
-                        if (cur_lexem.id == 8) cur_state = Vn.T;
-                        else
-                        {
-                            cur_state = Vn.ERR;
-                            addError("Ожидалось @<@, встречено: " + cur_lexem.name, cur_lexem.location);
-                        }
-                        break;
-                    case Vn.T: // int
-                        getnext();
-                        if (cur_lexem.id == 1) cur_state = Vn.L;
-                        else
-                        {
-                            cur_state = Vn.ERR;
-                            addError("Ожидалось @int@, встречено: " + cur_lexem.name, cur_lexem.location);
-                        }
-                        break;
-                    case Vn.L: // , | >
-                        getnext();
-                        if (cur_lexem.id == 12) cur_state = Vn.T;
-                        else if (cur_lexem.id == 9) cur_state = Vn.I;
-                        else
-                        {
-                            cur_state = Vn.ERR;
-                            addError("Ожидалось @,@ или @>@ , встречено: " + cur_lexem.name, cur_lexem.location);
-                        }
-                        break;
-                    case Vn.I: // имя функции
-                        getnext();
-                        if (cur_lexem.id == 3) cur_state = Vn.J;
-                        else
-                        {
-                            cur_state = Vn.ERR;
-                            addError("Ожидалось идентификатор, встречено: " + cur_lexem.name, cur_lexem.location);
-                        }
-                        break;
-                    case Vn.J: // =
-                        getnext();
-                        if (cur_lexem.id == 4) cur_state = Vn.E;
-                        else
-                        {
-                            cur_state = Vn.ERR;
-                            addError("Ожидалось @=@, встречено: " + cur_lexem.name, cur_lexem.location);
-                        }
-                        break;
-                    case Vn.E: // (
-                        getnext();
-                        if (cur_lexem.id == 6) cur_state = Vn.P;
-                        else
-                        {
-                            cur_state = Vn.ERR;
-                            addError("Ожидалось @(@, встречено: " + cur_lexem.name, cur_lexem.location);
-                        }
-                        break;
-                    case Vn.P: // переменная
-                        getnext();
-                        if (cur_lexem.id == 3) cur_state = Vn.R;
-                        else
-                        {
-                            cur_state = Vn.ERR;
-                            addError("Ожидалось идентификатор, встречено: " + cur_lexem.name, cur_lexem.location);
-                        }
-                        break;
-                    case Vn.R: // , || )
-                        getnext();
-                        if (cur_lexem.id == 12) cur_state = Vn.P;
-                        else if (cur_lexem.id == 7) cur_state = Vn.M;
-                        else
-                        {
-                            cur_state = Vn.ERR;
-                            addError("Ожидалось @,@ иди @)@, встречено: " + cur_lexem.name, cur_lexem.location);
-                        }
-                        break;
-                    case Vn.M: // =>
-                        getnext();
-                        if (cur_lexem.id == 5) cur_state = Vn.X;
-                        else
-                        {
-                            cur_state = Vn.ERR;
-                            addError("Ожидалось @=>@, встречено: " + cur_lexem.name, cur_lexem.location);
-                        }
-                        break;
+            list_lexems = lexems;
+            getnext();
 
-                    case Vn.ERR:
-                            cur_state = Vn.END;
+            while (true)
+            {
+                if (ExcpectedError("func")) break;
+                Start s = new Start(cur_lexem.name.ToLower(), cur_lexem.location);
+
+                if (s.Parse("func") == 1)
+                {
+                    errors.addErrors(s.Errors.path, s.Errors.line, s.Errors.column, s.Errors.message);
+                    getnext();
+                    break;
+                }
+                else if (cur_lexem.id == 8 || cur_lexem.id == 1 || cur_lexem.id == 12)
+                {
+                    errors.addError($"Ожидалось func, но не было получено", -1, 0, cur_lexem.location);
+                    break;
+                }
+
+                getnext();
+            }
+
+            while (true)
+            {
+                if (ExcpectedError("<")) break;
+                OpenBrcPars opbep = new OpenBrcPars(cur_lexem.name, cur_lexem.location);
+                if (opbep.Parse() == 1)
+                {
+                    getnext();
+                    break;
+                }
+                else
+                {
+                    if (cur_lexem.id == 1 || cur_lexem.id == 12 || cur_lexem.id == 9)
+                    {
+                        errors.addError($"Ожидалось <, но не было получено", -1, 0, cur_lexem.location);
+                        break;
+                    }
+                    errors.addErrors(opbep.Errors.path, opbep.Errors.line, opbep.Errors.column, opbep.Errors.message);
+                    getnext();
+                }
+            }
+
+
+
+            int pars_end = 0;
+            Error_page err = new Error_page("", -1, 0, "");
+            while (true)
+            {
+
+                while (true)
+                {
+
+                    if (ExcpectedError("int"))
+                    {
+                        pars_end = 2;
+                        break;
+                    }
+                    IntState intst = new IntState(cur_lexem.name.ToLower(), cur_lexem.location);
+                    if (intst.Parse("int") == 1)
+                    {
+                        errors.addErrors(intst.Errors.path, intst.Errors.line, intst.Errors.column, intst.Errors.message);
+                        getnext();
+                        break;
+                    }
+                    else
+                    {
+                        if (cur_lexem.id == 3 || cur_lexem.id == 9 || cur_lexem.id == 4)
+                        {
+                            err.message[0] += cur_lexem.name;
+                            pars_end = 2;
+                            if (cur_lexem.id == 9)
+                            {
+                                getnext();
+                                pars_end = 3;
+                            }
                             break;
+                        }
+                        errors.addErrors(intst.Errors.path, intst.Errors.line, intst.Errors.column, intst.Errors.message);
+                        getnext();
                     }
                 }
+
+                if (pars_end > 0) break;
+                while (true)
+                {
+                    if (ExcpectedError(", или >"))
+                    {
+                        pars_end = 2;
+                        break;
+                    }
+                    ParsEnums parsen = new ParsEnums(cur_lexem.name, cur_lexem.location);
+                    int parsed = parsen.Parse();
+                    if (parsed == 1 || parsed == 2)
+                    {
+                        if (parsed == 2) pars_end = 1;
+                        getnext();
+                        break;
+                    }
+                    else
+                    {
+                        if (cur_lexem.id == 3 || cur_lexem.id == 4)
+                        {
+                            err.message[0] += cur_lexem.name;
+                            pars_end = 1;
+                            break;
+                        }
+                        errors.addErrors(parsen.Errors.path, parsen.Errors.line, parsen.Errors.column, parsen.Errors.message);
+                        getnext();
+                    }
+                }
+                if (pars_end > 0) break;
+            }
+
+            err.path[0] = cur_lexem.location;
+            if (pars_end == 2 || pars_end == 3)
+            {
+                if (err.message[0] != string.Empty) errors.addError($"Ожидалось int, встречено: " + err.message[0], -1, 0, err.path[0]);
+                if (pars_end == 2) errors.addError($"Ожидалось >, встречено: " + err.message[0], -1, 0, err.path[0]);
+                err.message[0] = String.Empty;
+                pars_end = 1;
+            }
+            if (pars_end == 1)
+            {
+                while (true)
+                {
+                    if (ExcpectedError("идентификатор")) break;
+                    if (cur_lexem.id == 3)
+                    {
+                        if (err.message[0] != string.Empty) errors.addError($"Ожидалось >, встречено: " + err.message[0], -1, 0, err.path[0]);
+                        getnext();
+                        break;
+                    }
+                    else
+                    {
+                        if (cur_lexem.id == 4 || cur_lexem.id == 6)
+                        {
+                            errors.addError($"Ожидалось идентификатор, но не было получено", -1, 0, cur_lexem.location);
+                            break;
+                        }
+                        err.message[0] += cur_lexem.name;
+                        getnext();
+                    }
+                }
+            }
+            err.message[0]  = "";
+            while (true)
+            {
+                if (ExcpectedError("=")) break;
+                EqualState equal = new EqualState(cur_lexem.name, cur_lexem.location);
+                if (equal.Parse() == 1)
+                {
+                    getnext();
+                    break;
+                }
+                else
+                {
+                    if (cur_lexem.id == 6)
+                    {
+                        errors.addError($"Ожидалось =, но не было получено", -1, 0, cur_lexem.location);
+                        break;
+                    }
+                    err.message[0] += cur_lexem.name;
+                    getnext();
+                }
+            }
+            if (err.message[0] != string.Empty) errors.addError($"Ожидалось =, отброшенный фрагмент: " + err.message[0], -1, 0, err.path[0]);
+            while (true)
+            {
+                if (ExcpectedError("(")) break;
+                OpenBrc_IDS opbepIDS = new OpenBrc_IDS(cur_lexem.name, cur_lexem.location);
+                if (opbepIDS.Parse() == 1)
+                {
+                    getnext();
+                    break;
+                }
+                else
+                {
+                    if (cur_lexem.id == 3 || cur_lexem.id == 12)
+                    {
+                        errors.addError($"Ожидалось (, но не было получено", -1, 0, cur_lexem.location);
+                        break;
+                    }
+                    errors.addErrors(opbepIDS.Errors.path, opbepIDS.Errors.line, opbepIDS.Errors.column, opbepIDS.Errors.message);
+                    getnext();
+                }
+            }
+            int pars_end_IDS = 0;
+            Error_page err_Pars = new Error_page("", -1, 0, "");
+            while (true)
+            {
+                while (true)
+                {
+                    if (ExcpectedError("идентификатор"))
+                    {
+                        pars_end_IDS = 1;
+                        break;
+                    }
+                    if (cur_lexem.id == 3)
+                    {
+                        getnext();
+                        break;
+                    }
+                    else
+                    {
+                        if (cur_lexem.id == 5 || cur_lexem.id == 4 || cur_lexem.id == 9)
+                        {
+                            errors.addError($"Ожидалось идентификатор, но не было получено", -1, 0, cur_lexem.location);
+                            pars_end_IDS = 1;
+                            break;
+                        }
+                        errors.addError($"Ожидалось идентификатор, но не было получено", -1, 0, cur_lexem.location);
+                        if (cur_lexem.id != 7) getnext();
+                        break;
+                    }
+                }
+                if (pars_end_IDS > 0) break;
+                while (true)
+                {
+                    if (ExcpectedError(", или )"))
+                        {
+                            pars_end_IDS = 1;
+                            break;
+                        }
+                    IDSParsEnums parsen = new IDSParsEnums(cur_lexem.name, cur_lexem.location);
+                    int parsed = parsen.Parse();
+                    if (parsed == 1 || parsed == 2)
+                    {
+                        if (parsed == 2) pars_end_IDS = 1;
+                        getnext();
+                        break;
+                    }
+                    else
+                    {
+                        if (cur_lexem.id == 5 || cur_lexem.id == 4 || cur_lexem.id == 9)
+                        {
+                            errors.addError($"Ожидалось , или ), но не было получено", -1, 0, cur_lexem.location);
+                            if (cur_lexem.id == 4 || cur_lexem.id == 9)      pars_end_IDS = 1;
+                            else pars_end_IDS = 2;
+                            getnext();
+                            break;
+                        }
+                        errors.addErrors(parsen.Errors.path, parsen.Errors.line, parsen.Errors.column, parsen.Errors.message);
+                        getnext();
+                    }
+                }
+                if (pars_end_IDS > 0) break;
+            }
+
+
+            if (pars_end_IDS == 1) 
+            {
+                int key = 0;
+                while (true)
+                {
+                    if (ExcpectedError("=>")) break;
+                    if (cur_lexem.id == 5)
+                    {
+                        getnext();
+                        break;
+                    }
+                    else
+                    {
+                        if (cur_lexem.id == 3)
+                        {
+                            if (key == 0) errors.addError($"Ожидалось =>, но встречено: " + cur_lexem.name, -1, 0, cur_lexem.location);
+                            break;
+                        }
+                        key = 1;
+                        errors.addError($"Ожидалось =>, но встречено: "+cur_lexem.name, -1, 0, cur_lexem.location);
+                        getnext();
+                    }
+                }
+            }
+            ArithOpesState arith_op = new ArithOpesState(cur_lexem.name.ToLower(), cur_lexem.location);
+            while (true)
+            {
+                arith_op.arith_oper(cur_lexem.id,cur_lexem.name, cur_lexem.location);
+                if (cur_lexem.id == 13) break;
+                getnext();
+
+            }
+            errors.addErrors(arith_op.Errors.path, arith_op.Errors.line, arith_op.Errors.column, arith_op.Errors.message);
+           
         }
         public void addError(string buf, string location)
         {
@@ -316,5 +338,10 @@ namespace фапра
             cur_lexem_id++;
             cur_lexem = list_lexems[cur_lexem_id];
         }
+        private bool CANgetnext
+        {
+            get => cur_lexem_id < list_lexems.Count-1;
+        }
+
     }
 }

@@ -81,16 +81,28 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Error_page.cs" />
     <Compile Include="Lang_procc.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Lang_procc.Designer.cs">
       <DependentUpon>Lang_procc.cs</DependentUpon>
     </Compile>
+    <Compile Include="Lexema.cs" />
     <Compile Include="Parser.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Scanner.cs" />
+    <Compile Include="States\EqualState.cs" />
+    <Compile Include="States\ArithOpesState.cs" />
+    <Compile Include="States\OpenBrc_IDS.cs" />
+    <Compile Include="States\IDSParsEnums.cs" />
+    <Compile Include="States\ParsEnums.cs" />
+    <Compile Include="States\OpenBrcPars.cs" />
+    <Compile Include="States\IntState.cs" />
+    <Compile Include="States\Start.cs" />
+    <Compile Include="States\State.cs" />
+    <Compile Include="Stringreader.cs" />
     <EmbeddedResource Include="Lang_procc.resx">
       <DependentUpon>Lang_procc.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -129,5 +141,6 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
