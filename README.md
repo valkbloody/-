@@ -5,40 +5,48 @@
 
 Сведения об авторе: cтудент группы АП-327 Плахин Даннил
 
-<p><h3 align="center">Постановка задачи:</h3> Разработать синтаксический анализатор (парсер) в соответствии с индивидуальным вариантом курсовой (расчетно-графической) работы, интегрировать его в приложение из лабораторной работы №1 и обеспечить наглядный вывод результатов анализа.</p>
-<p>Вариант задания: 86. Лямбда-выражение на языке C#. <br>Func<int, int, int, int> calc = (a, b, c) => a + (b * c);</p>
+<p><h3 align="center">Постановка задачи:</h3> Разработать синтаксический анализатор (парсер) в соответствии с индивидуальным вариантом курсовой (расчетно-графической) работы, интегрировать его в приложение из лабораторной работы №1 и обеспечить наглядный вывод результатов анализа. Вариант задания: 86. Лямбда-выражение на языке C#.</p>
 Примеры правильных входных строк
 <br>Func<int, int, int> calc = (a, b) => a + b;
 <br>Func<int, int, int, int, int> calc = (a, b, c, d) => a + (b * c) * d;
-<h4align="center"> Разработка грамматики</h4>
+<br>Func<int, int, int, int> calc = (a, b, c) => a + (b * c);
+
+  
+<h3 align="center"> Разработка грамматики</h3>
+G ( ( <, >, ,, (, ), =, +, *, A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z,a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s, t, u, v, w, x, y, z ) ,( START, TYPES, ID, PARS, ARITH_OP, TYPESB, IDFUNC, PARSB, AROP, IDS ), P, START)
 <ul>
-<li> <'START'> -> "Func" <'TYPERSB'> </li>
-<li><'TYPESB'> -> "<" <'TYPES'></li>
-<li><'TYPES'> -> type <'ENUMT'></li>
-<li><'ENUMT'> -> ',' <'TYPES'> | ">" <'IDFUNC'></li>
-<li><'IDFUNC'> -> letter <'IDFUNC'></li>
-<li><'IDFUNCE'> -> letter <'IDFUNCE'> | "=" <'PARSB'></li>
-<li><'PARSB'> -> "(" <'PARS'></li>
-<li><'PARS'> -> letter <'ENUMP'></li>
-<li><'ENUMP'> -> letter <'ENUMP'> | "," <'PARS'> | ")" <'PARSEND'></li>
-<li><'PARSEND'> -> "=" <'LAMBDA'></li>
-<li>_(пробел)</li>
-<li><'LAMBDA'> -> ">" <'AROP'></li>
-<li><'AROP'> -> <'AROPB'> | <'AROP'>+<'AROPB'></li>
-<li><'AROPB'> -> <'IDS'> | <AROPB>*<'IDS'></li>
-<li><'IDS'> -> (<'AROP'>) | letter <'IDS'> | ε</li>
-<li>type -> "int"</li>
+<li>P:  &ltSTART&gt -> func &ltTYPES&gt &ltID&gt = &ltPARS&gt => &ltARITH_OP&gt</li>
+<li>&ltTYPES&gt -> &lt &ltTYPESB&gt &gt</li>
+<li>&ltTYPESB&gt -> type, &ltTYPESB&gt | type</li>
+<li>&ltID&gt -> letter &ltIDFUNC&gt</li>
+<li>&ltIDFUNC&gt -> letter &ltIDFUNC&gt | ε</li>
+<li>&ltPARS&gt -> ( &ltPARSB&gt )</li>
+<li>&ltPARSB&gt -> &ltID&gt,&ltPARSB&gt | &ltID&gt</li>
+<li>&ltARITH_OP&gt -> &ltAROP&gt | &ltARITH_OP&gt+&ltAROP&gt</li>
+<li>&ltAROP&gt -> &ltIDS&gt | *&ltIDS&gt</li>
+<li>&ltIDS&gt -> (&ltARITH_OP&gt) | letter &ltIDS&gt | ε</li>
+<li>type -> int</li>
 <li>letter = [a..z][A-Z]</li>
-<li>ops = "+" | "*"</li>  
+<li>ops = + | *</li>
 </ul>
-<h4>Классификация грамматики по Хомскому: контекстно-свободная грамматика</h4>
+<h4>Классификация грамматики по Хомскому: контекстно-свободная грамматика:</h4>
+<p>   A -> α, A ∊ VN, α ∊ V*</p>
+
 <h3 align="center">Метод анализа: Рекурсивный спуск</h3>
 На рисунке 1. предстьален рекурсивный спуск для грамматики выше.
-<img align="center" width="1020" height="857" alt="Диаграмма без названия" src="https://github.com/user-attachments/assets/7bd212fb-4c79-4925-8cea-a6b977686c40" />
+<img align="center" width="1020" height="857" alt="Диаграмма без названия" src="https://github.com/user-attachments/assets/edcf1b6b-e3a2-424a-ab60-f368c177f30c" />
+
 <p align="center">Рисунок 1.Рекусивный спуск</p>
 <p><h3  align="center">Метод Айронса</h3>
 Разрабатываемый синтаксический анализатор построен на базе контекстно-свободной грамматики. При нахождении лексемы, которая не соответствует грамматике предлагается свести алгоритм нейтрализации к последовательному удалению следующего символа во входной цепочке до тех пор, пока следующий символ не окажется одним из допустимых в данный момент разбора.</p>
-
+Схема работы
+<ul>
+<li>Обнаруживается ошибка в лексеме.</li>
+<li>В таблицу ошибок заносится описание ошибки и её позиция.</li>
+<li>Пропускаются символы до тех пор, пока не будет найден ожидаемый символ.</li>
+<li>При нахождении, работа с лексемой продолжается, иначе парсер выводит ошибку об отсутсутствии лексемы и переходит работать со следующей </li>
+<li>Это позволяет за один запуск выявить несколько ошибок во входной строке.</li>
+</ul>
 <h2 align="center">Тестовые примеры</h2>
 Представлен пример успешной обработки одной строки. (Рисунок 2)
 
