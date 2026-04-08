@@ -13,9 +13,9 @@
 
   
 <h3 align="center"> Разработка грамматики</h3>
-G ( ( <, >, ,, (, ), =, +, *, A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z,a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s, t, u, v, w, x, y, z ) ,( START, TYPES, ID, PARS, ARITH_OP, TYPESB, IDFUNC, PARSB, AROP, IDS ), P, START)
+G ( ( <, >, ,, (, ), =, +, *, ;, A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z,a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s, t, u, v, w, x, y, z ) ,( START, TYPES, ID, PARS, ARITH_OP, TYPESB, IDFUNC, PARSB, AROP, IDS ), P, START)
 <ul>
-<li>P:  &ltSTART&gt -> func &ltTYPES&gt &ltID&gt = &ltPARS&gt => &ltARITH_OP&gt</li>
+<li>P:  &ltSTART&gt -> func &ltTYPES&gt &ltID&gt = &ltPARS&gt => &ltARITH_OP&gt ;</li>
 <li>&ltTYPES&gt -> &lt &ltTYPESB&gt &gt</li>
 <li>&ltTYPESB&gt -> type, &ltTYPESB&gt | type</li>
 <li>&ltID&gt -> letter &ltIDFUNC&gt</li>
