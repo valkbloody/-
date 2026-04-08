@@ -10,7 +10,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
-
+using System.Text.RegularExpressions;
+using System.Security.Policy;
 namespace фапра
 {
     public partial class Lang_procc : Form
@@ -33,12 +34,15 @@ namespace фапра
         {
             InitializeComponent();
             // только для сканера
-            error_grid.Columns[0].HeaderText = "Условный код";
-            error_grid.Columns[1].HeaderText = "Тип лексемы";
+            error_grid.Columns[0].HeaderText = "Номер";
+            error_grid.Columns[1].HeaderText = "Выражение";
             error_grid.Columns[1].Width = 350;
-            error_grid.Columns[2].HeaderText = "Лексема";
+            error_grid.Columns[2].HeaderText = "Найденный фрагмент";
             error_grid.Columns[2].Width = 450;
             error_grid.Columns[3].HeaderText = "Местоположение";
+            comboBox1.SelectedIndex = 0;
+            string projectFolder = AppDomain.CurrentDomain.BaseDirectory;
+            openFileDialog1.InitialDirectory = projectFolder;
             change_font(this, 12);
 
         }
@@ -206,6 +210,74 @@ namespace фапра
         {
             this.Close();
         }
+        /*
+        25 23 1
+        Построить РВ, описывающее КПП организации. [0-9]{4}[0-9A-Z]{2}[0-9]{3}
+        Построить РВ для поиска ИНН физических и юридических лиц. \b(\d{10}|\d{12})\b
+        Построить РВ, описывающее формат адреса электронной почты. [a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}
+        */
+        // через граф 
+        private Error_page auto_graph_INN(RichTextBox edit_box)
+        {
+            Error_page found_expres = new Error_page();
+            int k = 0;
+            int index = 0;
+            string res = "";
+            foreach(char c in edit_box.Text)
+            {
+                if (Char.IsDigit(c))
+                {
+                    res += c;
+                    k++;
+                }
+                else
+                {
+                    if (k == 10 || k == 12)
+                    {
+                        int firsttt = edit_box.GetLineFromCharIndex(index);
+                        int fist = edit_box.GetFirstCharIndexFromLine(firsttt);
+                        found_expres.addError(res, found_expres.path.Count + 1, 0, $"строка {firsttt + 1}, {index - k - fist + 1}-{index - fist + 1}");
+                    }
+                    k = 0;
+                    res = "";
+
+                }
+                index++;
+            }
+            return found_expres;
+        }
+        // регулярные выражения
+        private Error_page Regular_exp(RichTextBox edit_box)
+        {
+            Error_page found_expres = new Error_page();
+            string mask = "";
+            switch (comboBox1.SelectedIndex)
+            {
+                case 0: // КПП
+                    mask = @"[0-9]{4}[0-9A-Z]{2}[0-9]{3}";
+                    break;
+                case 1: // ИНН
+                    mask = "\\b(\\d{10}|\\d{12})\\b";
+                    break;
+                case 2: // почта
+                    mask = "[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}";
+                    break;
+                case 3: // ИНН через граф
+                    return auto_graph_INN(edit_box);
+                default:
+                    mask = @"[0-9]{4}[0-9A-Z]{2}[0-9]{3}";
+                    break;
+            }
+            Regex regex = new Regex(mask);
+            MatchCollection matches = regex.Matches(edit_box.Text);
+            foreach (Match match in matches)
+            {
+                int firsttt = edit_box.GetLineFromCharIndex(match.Index);
+                int fist = edit_box.GetFirstCharIndexFromLine(firsttt);
+                found_expres.addError(match.Value, found_expres.path.Count+1, 0, $"строка {firsttt + 1}, {match.Index - fist + 1}-{match.Index - fist + match.Length+1}");
+            }
+            return found_expres;
+        }
         // Кнопка Пуск
         private void start(object sender, EventArgs e)
         {
@@ -214,38 +286,15 @@ namespace фапра
                 object numstr_obj = programs.SelectedTab.GetChildAtPoint(new Point(50, 50));
                 RichTextBox edit_box = numstr_obj as RichTextBox;
                 error_grid.Rows.Clear();
-                //создание сканера
-                Scanner scanner = new Scanner();
-                List<Lexema> lixemas = scanner.analyze(edit_box.Text);
-                //сначала лексемы
                 int selpage = programs.SelectedIndex;
                 errors.RemoveAt(selpage);
-                errors.Insert(selpage, scanner.Errors);
-                if (errors[selpage].path.Count == 0)
-                {
-                    Parser parser = new Parser();
-                    parser.Parse(lixemas);
-                    errors[selpage].addErrors(parser.Errors.path, parser.Errors.line, parser.Errors.column, parser.Errors.message);
-                    //потом ошибки
-                    for (int i = 0; i < errors[selpage].column.Count; i++)
+                errors.Insert(selpage, Regular_exp(edit_box));
+                //потом ошибки
+                for (int i = 0; i < errors[selpage].column.Count; i++)
                     {
-                        error_grid.Rows.Add(errors[selpage].line[i], "синтаксическая ошибка", errors[selpage].path[i], errors[selpage].message[i]);
+                        error_grid.Rows.Add(errors[selpage].line[i], comboBox1.Text, errors[selpage].path[i], errors[selpage].message[i]);
                     }
-                }
-                else
-                {
-                    //потом ошибки
-                    for (int i = 0; i < errors[selpage].column.Count; i++)
-                    {
-                        error_grid.Rows.Add(errors[selpage].line[i], "лексическая ошибка", errors[selpage].path[i], errors[selpage].message[i]);
-                    }
-                }
-                    toolStripStatusLabel3.Text = "Количенство ошибок: " + error_grid.Rows.Count;
-                //foreach (Lexema lexema in lixemas)
-                //{
-                //    error_grid.Rows.Add(lexema.id, lexema.type, lexema.name, lexema.location);
-                //}
-                if (errors[selpage].column.Count == 0) MessageBox.Show("Ошибок не обнаружено!");
+                if (errors[selpage].column.Count == 0) MessageBox.Show("Совпадений не найдено");
                 this.Refresh();
             }
             catch (Exception ex)
