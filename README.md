@@ -7,9 +7,9 @@
 
 <p><h3 align="center">Постановка задачи:</h3> Разработать синтаксический анализатор (парсер) в соответствии с индивидуальным вариантом курсовой (расчетно-графической) работы, интегрировать его в приложение из лабораторной работы №1 и обеспечить наглядный вывод результатов анализа. Вариант задания: 86. Лямбда-выражение на языке C#.</p>
 Примеры правильных входных строк
-<br>Func<int, int, int> calc = (a, b) => a + b;
-<br>Func<int, int, int, int, int> calc = (a, b, c, d) => a + (b * c) * d;
-<br>Func<int, int, int, int> calc = (a, b, c) => a + (b * c);
+<br>Func&ltint, int, int&gt calc = (a, b) => a + b;
+<br>Func&ltint, int, int, int, int&gt calc = (a, b, c, d) => a + (b * c) * d;
+<br>Func&ltint, int, int, int&gt calc = (a, b, c) => a + (b * c);
 
   
 <h3 align="center"> Разработка грамматики</h3>
