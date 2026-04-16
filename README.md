@@ -15,27 +15,26 @@
 <h3 align="center"> Разработка грамматики</h3>
 G ( ( <, >, ,, (, ), =, +, *, ;, A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z,a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s, t, u, v, w, x, y, z ) ,( START, TYPES, ID, PARS, ARITH_OP, TYPESB, IDFUNC, PARSB, AROP, IDS ), P, START)
 <ul>
-<li>P:  &ltSTART&gt -> func &ltTYPES&gt &ltID&gt = &ltPARS&gt => &ltARITH_OP&gt ;</li>
-<li>&ltTYPES&gt -> &lt &ltTYPESB&gt &gt</li>
-<li>&ltTYPESB&gt -> type, &ltTYPESB&gt | type</li>
+<li>P:  &ltSTART&gt -> 'func' &ltTYPES&gt &ltID&gt '=' &ltPARS&gt '=>' &ltARITH_OP&gt ';'</li>
+<li>&ltTYPES&gt -> '&lt'&ltTYPESB&gt'&gt'</li>
+<li>&ltTYPESB&gt -> type',' &ltTYPESB&gt | type</li>
 <li>&ltID&gt -> letter &ltIDFUNC&gt</li>
 <li>&ltIDFUNC&gt -> letter &ltIDFUNC&gt | ε</li>
-<li>&ltPARS&gt -> ( &ltPARSB&gt )</li>
-<li>&ltPARSB&gt -> &ltID&gt,&ltPARSB&gt | &ltID&gt</li>
-<li>&ltARITH_OP&gt -> &ltAROP&gt | &ltARITH_OP&gt+&ltAROP&gt</li>
-<li>&ltAROP&gt -> &ltIDS&gt | *&ltIDS&gt</li>
-<li>&ltIDS&gt -> (&ltARITH_OP&gt) | letter &ltIDS&gt | ε</li>
-<li>type -> int</li>
-<li>letter = [a..z][A-Z]</li>
-<li>ops = + | *</li>
+<li>&ltPARS&gt -> '('&ltPARSB&gt')'</li>
+<li>&ltPARSB&gt -> &ltID&gt','&ltPARSB&gt | &ltID&gt</li>
+<li>&ltARITH_OP&gt -> &ltAROP&gt | &ltARITH_OP&gt'+'&ltAROP&gt</li>
+<li>&ltAROP&gt -> &ltIDS&gt | &ltAROP&gt'*'&ltIDS&gt</li>
+<li>&ltIDS&gt -> '('&ltARITH_OP&gt')' | letter &ltIDS&gt | ε</li>
+<li>type -> 'int'</li>
+<li>letter -> 'a' | 'b' | ... | 'z' | 'A' | 'B' | ... | 'Z'</li>
+<li>ops -> '+' | '*'</li>
 </ul>
 <h4>Классификация грамматики по Хомскому: контекстно-свободная грамматика:</h4>
 <p>   A -> α, A ∊ VN, α ∊ V*</p>
 
 <h3 align="center">Метод анализа: Рекурсивный спуск</h3>
 На рисунке 1. предстьален рекурсивный спуск для грамматики выше.
-<img align="center" width="1020" height="857" alt="Диаграмма без названия" src="https://github.com/user-attachments/assets/edcf1b6b-e3a2-424a-ab60-f368c177f30c" />
-
+<img align="center" width="1020" height="857" src="https://github.com/user-attachments/assets/6e6ab066-c721-40b9-b1c4-9c9995005ba2" />
 <p align="center">Рисунок 1.Рекусивный спуск</p>
 <p><h3  align="center">Метод Айронса</h3>
 Разрабатываемый синтаксический анализатор построен на базе контекстно-свободной грамматики. При нахождении лексемы, которая не соответствует грамматике предлагается свести алгоритм нейтрализации к последовательному удалению следующего символа во входной цепочке до тех пор, пока следующий символ не окажется одним из допустимых в данный момент разбора.</p>
