@@ -87,7 +87,7 @@
 
 <h3 align="center"> Блок 2 графом автомата </h3>
 На рисунке 1. представлен граф грамматики выражения ИНН (10 или 12 цифр).
-<img align="center" src="https://github.com/user-attachments/assets/e7395dd5-3878-4097-8e59-501730a0f639" />
+<img align="center" src="https://github.com/user-attachments/assets/c3b96392-ed46-4147-a4cc-c244d7787284" />
 <h3 align="center"> Рисунок  1. Граф </h3>
 <h3>Тестовые примеры</h3>
 <img align="center" src="https://github.com/user-attachments/assets/d197ddcf-569b-4922-99bb-2b6954d85976" />
