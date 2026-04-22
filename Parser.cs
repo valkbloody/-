@@ -30,7 +30,7 @@ namespace фапра
             get { return errors; }
         }
  
-      
+        public List<string> arith_opes = new List<string>();
         private bool ExcpectedError(string exp_str)
         {
             if (!CANgetnext)
@@ -327,7 +327,7 @@ namespace фапра
 
             }
             errors.addErrors(arith_op.Errors.path, arith_op.Errors.line, arith_op.Errors.column, arith_op.Errors.message);
-           
+            arith_opes = arith_op.arith_exp;
         }
         public void addError(string buf, string location)
         {

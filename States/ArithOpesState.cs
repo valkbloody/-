@@ -9,7 +9,7 @@ namespace фапра.States
 {
     public class ArithOpesState : State
     {
-        private List<string> arith_exp = new List<string> { }; // выражение арифмитическое в ПОЛИС
+        public List<string> arith_exp = new List<string> { }; // выражение арифмитическое в ПОЛИС
 
         private List<char> opes = new List<char> { ' ' };  // буфет знаков для алгоритма Дейкстры
 

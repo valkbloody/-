@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using фапра.Sem_tree;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace фапра
@@ -40,7 +41,8 @@ namespace фапра
             error_grid.Columns[2].Width = 450;
             error_grid.Columns[3].HeaderText = "Местоположение";
             change_font(this, 12);
-
+            string projectPath = Directory.GetParent(Environment.CurrentDirectory).FullName;
+            openFileDialog1.InitialDirectory = projectPath;
         }
         
         // Пункт меню Правка
@@ -231,6 +233,18 @@ namespace фапра
                     {
                         error_grid.Rows.Add(errors[selpage].line[i], "синтаксическая ошибка", errors[selpage].path[i], errors[selpage].message[i]);
                     }
+                    AstBuilder astBuilder = new AstBuilder();
+                    List<string> tree = astBuilder.Get_Result(lixemas, parser.arith_opes);
+                    if (error_grid.Rows.Count == 0)
+                    {
+                        errors.RemoveAt(selpage);
+                        errors.Insert(selpage, astBuilder.Errors);
+                        for (int i = 0; i < errors[selpage].column.Count; i++)
+                        {
+                            error_grid.Rows.Add(errors[selpage].line[i], "семантическая ошибка", errors[selpage].path[i], errors[selpage].message[i]);
+                        }
+                        tree_ast(tree);
+                    }
                 }
                 else
                 {
@@ -245,13 +259,28 @@ namespace фапра
                 //{
                 //    error_grid.Rows.Add(lexema.id, lexema.type, lexema.name, lexema.location);
                 //}
-                if (errors[selpage].column.Count == 0) MessageBox.Show("Ошибок не обнаружено!");
                 this.Refresh();
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
             }
+        }
+        private void tree_ast(List<string> tree)
+        {
+            Form ast_tree = new Form();
+            ast_tree.Size = new System.Drawing.Size(1000, 1000);
+            ast_tree.Text = "Дерево";
+            RichTextBox info = new RichTextBox();
+            info.Font = toolStripStatusLabel1.Font;
+            info.Size = new System.Drawing.Size(1000 - 100, 1000 - 100);
+            info.Location = new Point(50, 50);
+            foreach (string twig in tree)
+            {
+                info.Text += twig + Environment.NewLine;
+            }
+            ast_tree.Controls.Add(info);
+            ast_tree.ShowDialog();
         }
         // Обработчик событий переключениия между вкладок
         private void programs_SelectedIndexChanged(object sender, EventArgs e)
