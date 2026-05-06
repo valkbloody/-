@@ -16,7 +16,7 @@ namespace фапра
         /// <summary>
         /// Сканер
         /// </summary>
-        private enum States { S, ID, FIN, ASGN, ERR }; // конечные автоматы
+        private enum States { S, ID, FIN, NUM, ERR }; // конечные автоматы
         // S - старт, ID - идентификатор, FIN - конец, ASGN - для лямбда символа
         // ERR - недопустимый символ
 
@@ -70,50 +70,45 @@ namespace фапра
                             addbuf(cym);
                             getNext();
                         }
-                        else if (cym == ';')
+                        else if (char.IsDigit(cym))
                         {
-                            AddLexema(13, "оператор заврешения", cym.ToString(),curr_line);
-                            cur_state = States.FIN;
-                        }
-                        else if (cym == '=')
-                        {
+                            cur_state = States.NUM;
                             addbuf(cym);
                             getNext();
-                            cur_state = States.ASGN;
                         }
                         else if (cym == '(')
                         {
-                            AddLexema(6, "открывающая скобка", cym.ToString(), curr_line);
+                            AddLexema(3, "открывающая скобка", cym.ToString(), curr_line);
                             getNext();
                         }
                         else if (cym == ')')
                         {
-                            AddLexema(7, "закрывающая скобка", cym.ToString(), curr_line);
+                            AddLexema(4, "закрывающая скобка", cym.ToString(), curr_line);
                             getNext();
                         }
-                        else if (cym == '<')
+                        else if (cym == '/')
                         {
-                            AddLexema(8, "открывающая скобка треугольная", cym.ToString(), curr_line);
+                            AddLexema(5, "оператор деления", cym.ToString(), curr_line);
                             getNext();
                         }
-                        else if (cym == '>')
+                        else if (cym == '%')
                         {
-                            AddLexema(9, "закрывающая скобка треугольная", cym.ToString(), curr_line);
+                            AddLexema(9, "остаток от деления", cym.ToString(), curr_line);
                             getNext();
                         }
                         else if (cym == '*')
                         {
-                            AddLexema(10, "оператор умножения", cym.ToString(), curr_line);
+                            AddLexema(6, "оператор умножения", cym.ToString(), curr_line);
                             getNext();
                         }
                         else if (cym == '+')
                         {
-                            AddLexema(11, "оператор присваивания", cym.ToString(), curr_line);
+                            AddLexema(7, "оператор сложения", cym.ToString(), curr_line);
                             getNext();
                         }
-                        else if (cym == ',')
+                        else if (cym == '-')
                         {
-                            AddLexema(12, "оператор перечисления", cym.ToString(), curr_line);
+                            AddLexema(8, "оператор разности", cym.ToString(), curr_line);
                             getNext();
                         }
                         else
@@ -124,34 +119,29 @@ namespace фапра
                             break;
                     // идентификатор
                     case States.ID:
-                        if (char.IsLetterOrDigit(cym))
+                        if (char.IsLetterOrDigit(cym) || cym == ' ')
                         {
-                            addbuf(cym);
+                            if (cym != ' ') addbuf(cym);
                             getNext();
                         }
                         else
                         {
-                            int is_key_word = find_key_word(buf);
-                            if (is_key_word == -1) AddLexema(3, "идентификатор", buf, curr_line);
-                            else
-                            {
-                                string val = "служебное слово " + key_words[is_key_word].ToString();
-                                AddLexema(is_key_word, val, buf, curr_line);
-                            }
+                            AddLexema(1, "идентификатор", buf, curr_line);
                             clearbuf();
                             cur_state = States.S;
                         }
                         break;
-                    case States.ASGN:
-                        if (cym == '>')
+                    case States.NUM:
+                        if (char.IsDigit(cym))
                         {
                             addbuf(cym);
-                            AddLexema(5, "лямбда оператор", buf, curr_line);
                             getNext();
                         }
                         else
                         {
-                            AddLexema(4, "оператор присваивания", buf, curr_line);
+                            AddLexema(2, "число", buf, curr_line);
+                            clearbuf();
+                            cur_state = States.S;
                         }
                         clearbuf();
                         cur_state = States.S;
@@ -168,15 +158,6 @@ namespace фапра
             }
             return lexems;
         }
-        private int find_key_word(string buf)
-        {
-            foreach (var keyword in key_words) 
-            { 
-                if (keyword.Value == buf.ToLower())
-                    return keyword.Key;
-            }
-            return -1;
-        }
         private void AddLexema(int id, string type, string name,int location)
         {
             string loc = getLocation(name, location);
@@ -188,30 +169,28 @@ namespace фапра
             int len = name.Length;
             if (len == 1 && cur_state != States.ID) len = 0;
             int leng = pos_in_line - len;
-            if (cur_state == States.ID)
+            if (cur_state == States.ID || cur_state == States.NUM)
             {
                 
                 return $"строка {curr_line}, {leng}-{pos_in_line-1}";
-            }
-            if (cur_state == States.ASGN)
-            {
-                if (len == 0) return $"строка {curr_line}, {leng - 1}-{pos_in_line-1}";
-                return $"строка {curr_line}, {leng + len - 1}-{pos_in_line}";
             }
             return $"строка {curr_line}, {leng}-{pos_in_line}";
         }
         private void getNext()
         {
-            try
+            if (pos_curr < text.Length)
             {
                 cym = text[pos_curr];
                 pos_curr++;
                 pos_in_line++;
             }
-            catch (IndexOutOfRangeException ex)
+            else
             {
-                throw new Exception("В конце строки не обнаружено ;");
+                if (cur_state == States.ID) AddLexema(1, "идентификатор", buf, curr_line);
+                if (cur_state == States.NUM) AddLexema(2, "число", buf, curr_line);
+                cur_state = States.FIN;
             }
+            
         }
         // добавление символа в буфер
         private void addbuf(char cym)

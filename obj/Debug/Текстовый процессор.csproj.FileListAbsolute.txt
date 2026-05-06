@@ -1,0 +1,28 @@
+F:\Games\Все что есть\Проекты\Арты\вуз\ПРЕДМЕТЫ СУа\3 курс\6 семестр\формальные языки\--main\bin\Debug\фапра.exe.config
+F:\Games\Все что есть\Проекты\Арты\вуз\ПРЕДМЕТЫ СУа\3 курс\6 семестр\формальные языки\--main\bin\Debug\фапра.exe
+F:\Games\Все что есть\Проекты\Арты\вуз\ПРЕДМЕТЫ СУа\3 курс\6 семестр\формальные языки\--main\bin\Debug\фапра.pdb
+F:\Games\Все что есть\Проекты\Арты\вуз\ПРЕДМЕТЫ СУа\3 курс\6 семестр\формальные языки\--main\bin\Debug\Microsoft.Bcl.AsyncInterfaces.dll
+F:\Games\Все что есть\Проекты\Арты\вуз\ПРЕДМЕТЫ СУа\3 курс\6 семестр\формальные языки\--main\bin\Debug\System.Buffers.dll
+F:\Games\Все что есть\Проекты\Арты\вуз\ПРЕДМЕТЫ СУа\3 курс\6 семестр\формальные языки\--main\bin\Debug\System.IO.Pipelines.dll
+F:\Games\Все что есть\Проекты\Арты\вуз\ПРЕДМЕТЫ СУа\3 курс\6 семестр\формальные языки\--main\bin\Debug\System.Memory.dll
+F:\Games\Все что есть\Проекты\Арты\вуз\ПРЕДМЕТЫ СУа\3 курс\6 семестр\формальные языки\--main\bin\Debug\System.Numerics.Vectors.dll
+F:\Games\Все что есть\Проекты\Арты\вуз\ПРЕДМЕТЫ СУа\3 курс\6 семестр\формальные языки\--main\bin\Debug\System.Runtime.CompilerServices.Unsafe.dll
+F:\Games\Все что есть\Проекты\Арты\вуз\ПРЕДМЕТЫ СУа\3 курс\6 семестр\формальные языки\--main\bin\Debug\System.Text.Encodings.Web.dll
+F:\Games\Все что есть\Проекты\Арты\вуз\ПРЕДМЕТЫ СУа\3 курс\6 семестр\формальные языки\--main\bin\Debug\System.Threading.Tasks.Extensions.dll
+F:\Games\Все что есть\Проекты\Арты\вуз\ПРЕДМЕТЫ СУа\3 курс\6 семестр\формальные языки\--main\bin\Debug\Microsoft.Bcl.AsyncInterfaces.xml
+F:\Games\Все что есть\Проекты\Арты\вуз\ПРЕДМЕТЫ СУа\3 курс\6 семестр\формальные языки\--main\bin\Debug\System.Buffers.xml
+F:\Games\Все что есть\Проекты\Арты\вуз\ПРЕДМЕТЫ СУа\3 курс\6 семестр\формальные языки\--main\bin\Debug\System.IO.Pipelines.xml
+F:\Games\Все что есть\Проекты\Арты\вуз\ПРЕДМЕТЫ СУа\3 курс\6 семестр\формальные языки\--main\bin\Debug\System.Memory.xml
+F:\Games\Все что есть\Проекты\Арты\вуз\ПРЕДМЕТЫ СУа\3 курс\6 семестр\формальные языки\--main\bin\Debug\System.Numerics.Vectors.xml
+F:\Games\Все что есть\Проекты\Арты\вуз\ПРЕДМЕТЫ СУа\3 курс\6 семестр\формальные языки\--main\bin\Debug\System.Runtime.CompilerServices.Unsafe.xml
+F:\Games\Все что есть\Проекты\Арты\вуз\ПРЕДМЕТЫ СУа\3 курс\6 семестр\формальные языки\--main\bin\Debug\System.Text.Encodings.Web.xml
+F:\Games\Все что есть\Проекты\Арты\вуз\ПРЕДМЕТЫ СУа\3 курс\6 семестр\формальные языки\--main\bin\Debug\System.Threading.Tasks.Extensions.xml
+F:\Games\Все что есть\Проекты\Арты\вуз\ПРЕДМЕТЫ СУа\3 курс\6 семестр\формальные языки\--main\obj\Debug\Текстовый процессор.csproj.AssemblyReference.cache
+F:\Games\Все что есть\Проекты\Арты\вуз\ПРЕДМЕТЫ СУа\3 курс\6 семестр\формальные языки\--main\obj\Debug\фапра.Lang_procc.resources
+F:\Games\Все что есть\Проекты\Арты\вуз\ПРЕДМЕТЫ СУа\3 курс\6 семестр\формальные языки\--main\obj\Debug\фапра.Properties.Resources.resources
+F:\Games\Все что есть\Проекты\Арты\вуз\ПРЕДМЕТЫ СУа\3 курс\6 семестр\формальные языки\--main\obj\Debug\Текстовый процессор.csproj.GenerateResource.cache
+F:\Games\Все что есть\Проекты\Арты\вуз\ПРЕДМЕТЫ СУа\3 курс\6 семестр\формальные языки\--main\obj\Debug\Текстовый процессор.csproj.CoreCompileInputs.cache
+F:\Games\Все что есть\Проекты\Арты\вуз\ПРЕДМЕТЫ СУа\3 курс\6 семестр\формальные языки\--main\obj\Debug\________.C71F848D.Up2Date
+F:\Games\Все что есть\Проекты\Арты\вуз\ПРЕДМЕТЫ СУа\3 курс\6 семестр\формальные языки\--main\obj\Debug\фапра.exe
+F:\Games\Все что есть\Проекты\Арты\вуз\ПРЕДМЕТЫ СУа\3 курс\6 семестр\формальные языки\--main\obj\Debug\фапра.pdb
+F:\Games\Все что есть\Проекты\Арты\вуз\ПРЕДМЕТЫ СУа\3 курс\6 семестр\формальные языки\--main\obj\Debug\фапра.exe.config

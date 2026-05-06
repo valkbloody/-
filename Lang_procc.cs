@@ -233,18 +233,18 @@ namespace фапра
                     {
                         error_grid.Rows.Add(errors[selpage].line[i], "синтаксическая ошибка", errors[selpage].path[i], errors[selpage].message[i]);
                     }
-                    AstBuilder astBuilder = new AstBuilder();
-                    List<string> tree = astBuilder.Get_Result(lixemas, parser.arith_opes);
-                    if (error_grid.Rows.Count == 0)
-                    {
-                        errors.RemoveAt(selpage);
-                        errors.Insert(selpage, astBuilder.Errors);
-                        for (int i = 0; i < errors[selpage].column.Count; i++)
-                        {
-                            error_grid.Rows.Add(errors[selpage].line[i], "семантическая ошибка", errors[selpage].path[i], errors[selpage].message[i]);
-                        }
-                        tree_ast(tree);
-                    }
+                    //AstBuilder astBuilder = new AstBuilder();
+                    //List<string> tree = astBuilder.Get_Result(lixemas, parser.arith_opes);
+                    //if (error_grid.Rows.Count == 0)
+                    //{
+                    //    errors.RemoveAt(selpage);
+                    //    errors.Insert(selpage, astBuilder.Errors);
+                    //    for (int i = 0; i < errors[selpage].column.Count; i++)
+                    //    {
+                    //        error_grid.Rows.Add(errors[selpage].line[i], "семантическая ошибка", errors[selpage].path[i], errors[selpage].message[i]);
+                    //    }
+                    //    tree_ast(tree);
+                    //}
                 }
                 else
                 {
@@ -255,10 +255,10 @@ namespace фапра
                     }
                 }
                     toolStripStatusLabel3.Text = "Количенство ошибок: " + error_grid.Rows.Count;
-                //foreach (Lexema lexema in lixemas)
-                //{
-                //    error_grid.Rows.Add(lexema.id, lexema.type, lexema.name, lexema.location);
-                //}
+                foreach (Lexema lexema in lixemas)
+                {
+                    error_grid.Rows.Add(lexema.id, lexema.type, lexema.name, lexema.location);
+                }
                 this.Refresh();
             }
             catch (Exception ex)
