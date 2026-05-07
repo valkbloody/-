@@ -223,38 +223,29 @@ namespace фапра
                 int selpage = programs.SelectedIndex;
                 errors.RemoveAt(selpage);
                 errors.Insert(selpage, scanner.Errors);
-                if (errors[selpage].path.Count == 0)
+                for (int i = 0; i < scanner.Errors.column.Count; i++)
                 {
-                    Parser parser = new Parser();
-                    parser.Parse(lixemas);
-                    errors[selpage].addErrors(parser.Errors.path, parser.Errors.line, parser.Errors.column, parser.Errors.message);
-                    //потом ошибки
-                    for (int i = 0; i < errors[selpage].column.Count; i++)
-                    {
-                        error_grid.Rows.Add(errors[selpage].line[i], "синтаксическая ошибка", errors[selpage].path[i], errors[selpage].message[i]);
-                    }
-                    //AstBuilder astBuilder = new AstBuilder();
-                    //List<string> tree = astBuilder.Get_Result(lixemas, parser.arith_opes);
-                    //if (error_grid.Rows.Count == 0)
-                    //{
-                    //    errors.RemoveAt(selpage);
-                    //    errors.Insert(selpage, astBuilder.Errors);
-                    //    for (int i = 0; i < errors[selpage].column.Count; i++)
-                    //    {
-                    //        error_grid.Rows.Add(errors[selpage].line[i], "семантическая ошибка", errors[selpage].path[i], errors[selpage].message[i]);
-                    //    }
-                    //    tree_ast(tree);
-                    //}
+                    error_grid.Rows.Add(scanner.Errors.line[i], "лексическая ошибка", scanner.Errors.path[i], scanner.Errors.message[i]);
                 }
-                else
+                Parser parser = new Parser();
+                parser.Parse(lixemas);
+                errors[selpage].addErrors(parser.Errors.path, parser.Errors.line, parser.Errors.column, parser.Errors.message);
+                //потом ошибки
+                for (int i = 0; i < parser.Errors.path.Count; i++)
                 {
-                    //потом ошибки
-                    for (int i = 0; i < errors[selpage].column.Count; i++)
+                    error_grid.Rows.Add(parser.Errors.line[i], "синтаксическая ошибка", parser.Errors.path[i], parser.Errors.message[i]);
+                }
+                AstBuilder astBuilder = new AstBuilder();
+                List<string> tree = astBuilder.Get_Result(lixemas, parser.arith_opes);
+                toolStripStatusLabel3.Text = "Количество ошибок: " + error_grid.Rows.Count;
+                if (errors[selpage].column.Count == 0)
+                {
+                    for (int i = 0; i < tree.Count; i++)
                     {
-                        error_grid.Rows.Add(errors[selpage].line[i], "лексическая ошибка", errors[selpage].path[i], errors[selpage].message[i]);
+                        string[] splitt = tree[i].Split(' ');
+                        error_grid.Rows.Add(i, "тетрада", splitt[1] + splitt[0] + splitt[2], splitt[3]);
                     }
                 }
-                    toolStripStatusLabel3.Text = "Количенство ошибок: " + error_grid.Rows.Count;
                 foreach (Lexema lexema in lixemas)
                 {
                     error_grid.Rows.Add(lexema.id, lexema.type, lexema.name, lexema.location);

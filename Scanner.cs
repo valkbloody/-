@@ -142,15 +142,13 @@ namespace фапра
                             AddLexema(2, "число", buf, curr_line);
                             clearbuf();
                             cur_state = States.S;
-                        }
-                        clearbuf();
-                        cur_state = States.S;
-                        
+                        }                        
                         break;
                     case States.ERR:
                         addError(buf, curr_line);
                         clearbuf();
-                        cur_state = States.FIN;
+                        getNext();
+                        cur_state = States.S;
                         break;
                     case States.FIN:
                         break;

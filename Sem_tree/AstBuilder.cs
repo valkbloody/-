@@ -78,63 +78,55 @@ namespace фапра.Sem_tree
             }
             return res;
         }
-
-        private void Char_table(List<Lexema> lexems)
-        {
-            string name = "";
-            string type = "";
-            int num_types = Get_Num_Types(lexems);
-            int num_ids = Get_Num_Ids(lexems);
-            int nums = 0;
-            if (num_types > num_ids) nums = num_types; else nums = num_ids;
-            for (int i = 1; i <= nums; i++)
-            {
-                type = GetType(lexems, i);
-                name = GetName(lexems, i);
-                if (type == "")
-                {
-                    errors.addError($"Идентификатор не имеет типа данных: " + name, -1, 0, loc_name);
-                    continue;
-                }
-                if (name == "")
-                {
-                    errors.addError($"Указан лишний тип данных: " + type, -1, 0, loc_type);
-                    continue;
-                }
-                if (chartable.declare(name, type) == 0) errors.addError($"Идентификатор уже был объявлен ранее: " + name, -1, 0, loc_name);
-            }
-            function.Name = chartable.get_from_pos(0)[0];
-            function.Type = chartable.get_from_pos(0)[1];
-        }
         private List<string> POLIS_to_INVERS(List<string> arirh_op_polis) 
         {
             List<string> right_order = new List<string>();
             for (int i = 0; i < arirh_op_polis.Count; i++)
             {
                 string cur = arirh_op_polis[i];
-                if (cur == "+" || cur == "*") 
+                if (cur == "+" || cur == "*" || cur == "-" || cur == "/" || cur == "%") 
                 {
                     string right = arirh_op_polis[i - 1];
                     string left = arirh_op_polis[i - 2];
-                    if (chartable.lookup_arith(right) != 1 && right != "SOS") 
-                        errors.addError($"Используется не объявленный идентификатор: " + right, -1, 0, get_pos(right));
-                    if (chartable.lookup_arith(left) != 1 && left != "SOS") 
-                        errors.addError($"Используется не объявленный идентификатор: " + left, -1, 0, get_pos(left));
-                    if (right == "SOS" && left != "SOS") 
+                    //if (chartable.lookup_arith(right) != 1 && right != "SOS") 
+                    //    errors.addError($"Используется не объявленный идентификатор: " + right, -1, 0, get_pos(right));
+                    //if (chartable.lookup_arith(left) != 1 && left != "SOS") 
+                    //    errors.addError($"Используется не объявленный идентификатор: " + left, -1, 0, get_pos(left));
+                    if (right == "SOS" && left != "SOS")
                     {
-                        right_order.Add(cur + " " + left + " " + Convert.ToString(right_order.Count - 1));
+                        if (int.TryParse(left, out int result))
+                        {
+                            right_order.Add(cur + " " + left + " #" + Convert.ToString(right_order.Count - 1) + " ");
+                            right_order[right_order.Count - 1] += oper_res(right_order);
+                        }
+                        else
+                        right_order.Add(cur + " " + left + " #" + Convert.ToString(right_order.Count - 1));
                     }
                     else if (right != "SOS" && left == "SOS")
                     {
-                        right_order.Add(cur + " " + Convert.ToString(right_order.Count - 1) + " " + right);
+                        if (int.TryParse(right, out int result))
+                        {
+                            right_order.Add(cur + " #" + Convert.ToString(right_order.Count - 1) + " " + right + " ");
+                            right_order[right_order.Count - 1] += oper_res(right_order);
+                        }
+                        else
+                        right_order.Add(cur + " #" + Convert.ToString(right_order.Count - 1) + " " + right);
                     }
                     else if (right == "SOS" && left == "SOS")
                     {
-                        right_order.Add(cur + " " + Convert.ToString(right_order.Count - 2) + " " + Convert.ToString(right_order.Count - 1));
+                        right_order.Add(cur + " #" + Convert.ToString(right_order.Count - 2) + " #" + Convert.ToString(right_order.Count - 1) + " ");
+                        right_order[right_order.Count - 1] += oper_res(right_order);
                     }
                     else
                     {
-                        right_order.Add(cur + " " + left + " " + right);
+                        if (int.TryParse(left, out int result3) && int.TryParse(right, out int result4))
+                        {
+                            right_order.Add(cur + " " + left + " " + right + " " + action(right_order,left,right,cur[0]));
+                        }
+                        else
+                        {
+                            right_order.Add(cur + " " + left + " " + right);
+                        }
                     }
                     arirh_op_polis.RemoveAt(i - 1);
                     arirh_op_polis.RemoveAt(i - 1);
@@ -145,7 +137,51 @@ namespace фапра.Sem_tree
             return right_order;
         }
         private List<Lexema> lexemsa = new List<Lexema>();
-        private string get_pos(string need)
+        private int oper_res(List<string> table)
+        {
+            string op = table[table.Count - 1];
+            string[] splitted = op.Split(' ');
+            char sign = op[0];
+            int key = 0;
+            string v1 = splitted[1];
+            string v2 = splitted[2];
+            string r1 = v1;
+            string r2 = v2;
+            if (v1[0] == '#') r1 = get_prev(table, v1.Remove(0, 1));
+            if (v2[0] == '#') r2 = get_prev(table, v2.Remove(0, 1));
+            return action(table,r1,r2, sign);
+        }
+        private string get_prev(List<string> table, string id)
+        {
+            string op = table[Convert.ToInt32(id)];
+            string[] splitted = op.Split(' ');
+            return splitted[3];
+        }
+        private int action(List<string> table, string v1, string v2, char sign)
+        {
+            int res = 0;
+            switch (sign)
+            {
+                case '-':
+                    res = Convert.ToInt32(v1) - Convert.ToInt32(v2);
+                    break;
+                case '+':
+                    res = Convert.ToInt32(v1) + Convert.ToInt32(v2);
+                    break;
+                case '%':
+                    res = Convert.ToInt32(v1) % Convert.ToInt32(v2);
+                    break;
+                case '/':
+                    res = Convert.ToInt32(v1) / Convert.ToInt32(v2);
+                    break;
+                case '*':
+                    res = Convert.ToInt32(v1) * Convert.ToInt32(v2);
+                    break;
+            }
+            return res;
+        }
+        
+            private string get_pos(string need)
         {
             int num = chartable.lookup(need);
             foreach(Lexema lexema in lexemsa)
@@ -163,11 +199,7 @@ namespace фапра.Sem_tree
         public List<string> Get_Result(List<Lexema> lexems, List<string> arirh_op_polis)
         {
             lexemsa = lexems;
-            Char_table(lexems);
-            function.FromChartable(chartable);
-            function.ArthOp(POLIS_to_INVERS(arirh_op_polis));
-            List<string> tree =function.get_tree();
-            return tree;
+            return POLIS_to_INVERS(arirh_op_polis); 
         }   
     }
 }

@@ -47,8 +47,11 @@ namespace фапра.States
         {
             switch (op)
             {
+                case '-':
                 case '+':
                     return 7;
+                case '%':
+                case '/':
                 case '*':
                     return 8;
                 case '(':
@@ -61,7 +64,7 @@ namespace фапра.States
         // Проверка корректности арифм. выражения.
         public int arith_oper(int id, string name, string location)
         {
-            if (id == 3) // переменная
+            if (id == 2 || id == 1) // переменная 
             {
                 if (errors_flag == 1) // две подряд
                 {
@@ -72,12 +75,9 @@ namespace фапра.States
                 errors_flag = 1;
                 return 0;
             }
-            else if (id == 11 ||  // *
-                id == 10 ||       // +
-               id == 6 ||        // (
-               id == 7)          // )
+            else if (id >= 3 && id <= 9)
             {
-                if (id == 11 || id == 10) // оператор
+                if (id != 3 && id != 4) // оператор
                 {
                     if (errors_flag == 0) // два подряд
                     {
@@ -86,30 +86,35 @@ namespace фапра.States
                     }
                     errors_flag = 0;
                 }
-                if (id == 6) // (
+                int key_brc = 0;
+                if (id == 3) // (
                 {
                     brc_flag++;
                     brcs_pos.Add(" +" + location);
                     if (errors_flag == 1)
                     {
-                        errors.addError("Отсутствует знак до открывающей скобки. ",-1,0 ,location);
                         errors_flag = 0;
+                        key_brc = 1;
                     }
                 }
-                if (id == 7) // )
+                if (id == 4) // )
                 {
                     brc_flag--;
                     brcs_pos.Add(" -" + location);
                     if (errors_flag == 0)
-                    {
-                        errors.addError("Отсутствует идентфикатор до закрывающей скобки. ", -1, 0,location);
+                    {  
                         errors_flag = 1;
+                        key_brc = 2;
                     }
                 }
                 if (IsBigger(name[0], opes[opes.Count - 1]) || opes.Count == 1) // доб. в буфер знаков
-                {
-                    if (opes[opes.Count - 1] == '(' && id == 7) errors.addError("Присутствуют незначащие скобки", -1, 0 ,location);
+                {                    
+                    if (opes[opes.Count - 1] == '(' && id == 4) errors.addError("Присутствуют незначащие скобки", -1, 0 ,location);
+                    else if (key_brc == 1) errors.addError("Отсутствует знак до открывающей скобки. ", -1, 0, location);
+                    else if (key_brc == 2) errors.addError("Отсутствует идентфикатор до закрывающей скобки. ", -1, 0, location);
                     opes.Add(name[0]);
+
+                    
                 }
                 else
                 {
@@ -118,7 +123,7 @@ namespace фапра.States
                         arith_exp.Add(opes[opes.Count - 1].ToString());
                         opes.RemoveAt(opes.Count - 1);
                     }
-                    if (opes[opes.Count - 1] == '(' && id == 7)
+                    if (opes[opes.Count - 1] == '(' && id == 4)
                     {
                         opes.RemoveAt(opes.Count - 1);
                     }

@@ -26,3 +26,30 @@ F:\Games\Все что есть\Проекты\Арты\вуз\ПРЕДМЕТЫ 
 F:\Games\Все что есть\Проекты\Арты\вуз\ПРЕДМЕТЫ СУа\3 курс\6 семестр\формальные языки\--main\obj\Debug\фапра.exe
 F:\Games\Все что есть\Проекты\Арты\вуз\ПРЕДМЕТЫ СУа\3 курс\6 семестр\формальные языки\--main\obj\Debug\фапра.pdb
 F:\Games\Все что есть\Проекты\Арты\вуз\ПРЕДМЕТЫ СУа\3 курс\6 семестр\формальные языки\--main\obj\Debug\фапра.exe.config
+C:\Users\User.DESKTOP-Q2FT676\Desktop\--6-lab\bin\Debug\фапра.exe.config
+C:\Users\User.DESKTOP-Q2FT676\Desktop\--6-lab\bin\Debug\фапра.exe
+C:\Users\User.DESKTOP-Q2FT676\Desktop\--6-lab\bin\Debug\фапра.pdb
+C:\Users\User.DESKTOP-Q2FT676\Desktop\--6-lab\bin\Debug\Microsoft.Bcl.AsyncInterfaces.dll
+C:\Users\User.DESKTOP-Q2FT676\Desktop\--6-lab\bin\Debug\System.Buffers.dll
+C:\Users\User.DESKTOP-Q2FT676\Desktop\--6-lab\bin\Debug\System.IO.Pipelines.dll
+C:\Users\User.DESKTOP-Q2FT676\Desktop\--6-lab\bin\Debug\System.Memory.dll
+C:\Users\User.DESKTOP-Q2FT676\Desktop\--6-lab\bin\Debug\System.Numerics.Vectors.dll
+C:\Users\User.DESKTOP-Q2FT676\Desktop\--6-lab\bin\Debug\System.Runtime.CompilerServices.Unsafe.dll
+C:\Users\User.DESKTOP-Q2FT676\Desktop\--6-lab\bin\Debug\System.Text.Encodings.Web.dll
+C:\Users\User.DESKTOP-Q2FT676\Desktop\--6-lab\bin\Debug\System.Threading.Tasks.Extensions.dll
+C:\Users\User.DESKTOP-Q2FT676\Desktop\--6-lab\bin\Debug\Microsoft.Bcl.AsyncInterfaces.xml
+C:\Users\User.DESKTOP-Q2FT676\Desktop\--6-lab\bin\Debug\System.Buffers.xml
+C:\Users\User.DESKTOP-Q2FT676\Desktop\--6-lab\bin\Debug\System.IO.Pipelines.xml
+C:\Users\User.DESKTOP-Q2FT676\Desktop\--6-lab\bin\Debug\System.Memory.xml
+C:\Users\User.DESKTOP-Q2FT676\Desktop\--6-lab\bin\Debug\System.Numerics.Vectors.xml
+C:\Users\User.DESKTOP-Q2FT676\Desktop\--6-lab\bin\Debug\System.Runtime.CompilerServices.Unsafe.xml
+C:\Users\User.DESKTOP-Q2FT676\Desktop\--6-lab\bin\Debug\System.Text.Encodings.Web.xml
+C:\Users\User.DESKTOP-Q2FT676\Desktop\--6-lab\bin\Debug\System.Threading.Tasks.Extensions.xml
+C:\Users\User.DESKTOP-Q2FT676\Desktop\--6-lab\obj\Debug\Текстовый процессор.csproj.AssemblyReference.cache
+C:\Users\User.DESKTOP-Q2FT676\Desktop\--6-lab\obj\Debug\фапра.Lang_procc.resources
+C:\Users\User.DESKTOP-Q2FT676\Desktop\--6-lab\obj\Debug\фапра.Properties.Resources.resources
+C:\Users\User.DESKTOP-Q2FT676\Desktop\--6-lab\obj\Debug\Текстовый процессор.csproj.GenerateResource.cache
+C:\Users\User.DESKTOP-Q2FT676\Desktop\--6-lab\obj\Debug\Текстовый процессор.csproj.CoreCompileInputs.cache
+C:\Users\User.DESKTOP-Q2FT676\Desktop\--6-lab\obj\Debug\Текстовый процессор.csproj.CopyComplete
+C:\Users\User.DESKTOP-Q2FT676\Desktop\--6-lab\obj\Debug\фапра.exe
+C:\Users\User.DESKTOP-Q2FT676\Desktop\--6-lab\obj\Debug\фапра.pdb

@@ -50,7 +50,11 @@ namespace фапра
             while (true)
             {
                 arith_op.arith_oper(cur_lexem.id,cur_lexem.name, cur_lexem.location);
-                if (!CANgetnext) break;
+                if (!CANgetnext)
+                {
+                    arith_op.arith_oper(13, ";", cur_lexem.location);
+                    break;
+                }
                 getnext();
 
             }
