@@ -7,28 +7,29 @@
 
 <p><h3 align="center">Постановка задачи:</h3> Развить ранее созданный синтаксический анализатор (парсер) до семантического: построить абстрактное синтаксическое дерево (AST) и реализовать проверку контекстно-зависимых условий в соответствии с индивидуальным вариантом курсовой работы. Вариант задания: C# </p>
 Грамматика
-E → TA
-A → ε | + TA | - TA
-T → FB
-B → ε | * FB | / FB | % FB
-F → num | id | (E)
-id → letter {letter | digit | _}
-num → digit {digit}
-<p align="center">Схема сканера</p>
+E → TA<br>
+A → ε | + TA | - TA<br>
+T → FB<br>
+B → ε | * FB | / FB | % FB<br>
+F → num | id | (E)<br>
+id → letter {letter | digit | _}<br>
+num → digit {digit}<br>
+<h3 align="center">Схема сканера</h3>
 <img width="525" height="692" alt="image" align="center" src="https://github.com/user-attachments/assets/aa67f0ce-1338-45fe-90db-de0feea24046" />
 
-<p align="center">Схема парсера</p>
+<br>
+<h3 align="center">Схема парсера</h3>
 <img width="503" height="265" alt="image" align="center" src="https://github.com/user-attachments/assets/cc07d321-47ef-4832-8c94-8a8bcf43c286" />
 
-Классификация грамматики по Хомскому: контекстно-свободная грамматика:
+<h3  align="center"> Классификация грамматики по Хомскому: контекстно-свободная грамматика:</h3>
 A -> α, A ∊ VN, α ∊ V*
 
-Примеры правильных входных строк
+<h3  align="center"> Примеры правильных входных строк</h3>
 <br>a + b * c / 2 - q % (d + 2) - q
 <br>a + b * c + d - r
 <br>123 + (144 % 78 * (53 / 2))
 
-Лексические и сентаксические ошибки
+<h3  align="center"> Лексические и сентаксические ошибки</h3>
 <img width="1918" height="727" alt="image" align="center" src="https://github.com/user-attachments/assets/646055c3-ec6a-49f2-bf54-5ca280e3224e" />
 <p align="center"> Рисунок 1 - Прмиер корректной строки </p>
 <img width="1403" height="505" alt="image" align="center" src="https://github.com/user-attachments/assets/4b040683-b392-401a-bb61-095716f07546" />
