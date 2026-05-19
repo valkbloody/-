@@ -1,89 +1,66 @@
 <h2 align="center">Текстовый редактор для процессора</h2>
 
-<h3  align="center">Название: Построение AST и проверка контекстно-зависимых условий</h3>
-<p><h3 align="center">Цель работы:</h3> Изучить назначение и принципы работы семантического анализатора в структуре компилятора. Освоить методы построения абстрактного синтаксического дерева (AST) и проверки контекстно-зависимых условий (семантических правил) для заданной синтаксической конструкции. </p>
+<h3  align="center">Название: Создание внутренней формы представления программы</h3>
+<p><h3 align="center">Цель работы:</h3> Изучить методы построения внутреннего представления программы (ВПП) на основе контекстно-свободной грамматики, реализовать синтаксический анализатор методом рекурсивного спуска и преобразовать арифметические выражения в тетрады и ПОЛИЗ. </p>
 
 Сведения об авторе: cтудент группы АП-327 Плахин Даннил
 
-<p><h3 align="center">Постановка задачи:</h3> Развить ранее созданный синтаксический анализатор (парсер) до семантического: построить абстрактное синтаксическое дерево (AST) и реализовать проверку контекстно-зависимых условий в соответствии с индивидуальным вариантом курсовой работы. Вариант задания: 86. Лямбда-выражение на языке C#.</p>
-Примеры правильных входных строк
-<br>Func&ltint, int, int&gt calc = (a, b) => a + b;
-<br>Func&ltint, int, int, int, int&gt calc = (a, b, c, d) => a + (b * c) * d;
-<br>Func&ltint, int, int, int&gt calc = (a, b, c) => a + (b * c);
+<p><h3 align="center">Постановка задачи:</h3> Развить ранее созданный синтаксический анализатор (парсер) до семантического: построить абстрактное синтаксическое дерево (AST) и реализовать проверку контекстно-зависимых условий в соответствии с индивидуальным вариантом курсовой работы. Вариант задания: C# </p>
+Грамматика
+E → TA<br>
+A → ε | + TA | - TA<br>
+T → FB<br>
+B → ε | * FB | / FB | % FB<br>
+F → num | id | (E)<br>
+id → letter {letter | digit | _}<br>
+num → digit {digit}<br>
+<h3 align="center">Схема сканера</h3>
+<img width="525" height="692" alt="image" align="center" src="https://github.com/user-attachments/assets/aa67f0ce-1338-45fe-90db-de0feea24046" />
 
-<h3 align="center"> Контекстно-зависимые условия </h3>
-<ul>
-  <li>Правило 1 (уникальность идентификаторов)</li>
-  <ul>
-  <li>Проверка: на уникальность имен в одной зоне области</li>
-  <li>При ошибке ожидаемое сообщение: Идентификатор уже был объявлен ранее: (Рисунок 1)</li>
-    <img align="center" width="2500" height="200" alt="image" src="https://github.com/user-attachments/assets/f101314e-b7e3-4cac-b4eb-8f04f50f6c0b" />
-    <p align="center">Рисунок 1.Ошибка уникальности имен</p>
-  </ul>
-  <li>Правило 4 (использование идентификаторов)</li>
-  <ul>
-  <li>Проверка: на то, что используемые идентификаторы были объявлены ранее</li>
-  <li>При ошибке ожидаемое сообщение: Используется не объявленный идентификатор: (Рисунок 2)</li>
-    <img align="center" width="2500" height="200" alt="image" src="https://github.com/user-attachments/assets/7c6850c4-b032-4999-9416-1bd5e50ae46d" />
-    <p align="center">Рисунок 2.Ошибка использование неинициализированной переменной</p>
-  </ul>
-</ul> 
+<br>
+<h3 align="center">Схема парсера</h3>
+<img width="503" height="265" alt="image" align="center" src="https://github.com/user-attachments/assets/cc07d321-47ef-4832-8c94-8a8bcf43c286" />
 
-<h3 align="center"> Структура AST </h3>
-<ul>
-  <p>
-  <li>Узел AstNode</li>
-  Базовый узел, из которого наследуются все последующие.
-  <ul>
-    Параметры:
-    <li>_type_node - тип узла;</li>
-    <li>_type - тип данных;</li>
-    <li>_name - идентификатор.</li>
-  </ul>
-  </p>
-  <p><li>Узел FunctionDeclNode : AstNode</li>
-  Узел, который представляет функцию.
-   <ul>
-     Параметры:
-    <li>_type_node - тип узла;</li>
-    <li>_type - тип данных;</li>
-    <li>_name - идентификатор.</li>
-    <li>parameters - список параметров функции. Тип данных параметра:  List&ltVarDeclNode&gt </li>
-    <li>body - тело функции(арифмитическое выражение). Тип данных параметра:  BinaryOpNode </li>
-</p>
-   </ul>
-       <p>
-  <li>Узел VarDeclNode: AstNode</li>
-  Узел, представляющий объявление переменной (Тип - Имя переменной).
-  <ul>
-    Параметры:
-    <li>_type_node - тип узла;</li>
-    <li>_type - тип данных;</li>
-    <li>_name - идентификатор.</li>
-  </ul>
-  </p>
-  <p>
-  <li>Узел BinaryOpNode: AstNode</li>
-  Узел, представляющий объявление переменной (Тип - Имя переменной).
-  <ul>
-    Параметры:
-    <li>_type_node - тип узла;</li>
-    <li>_type - тип данных;</li>
-    <li>_name - идентификатор.</li>
-    <li>_left_leaf - левое поддерево узла. Тип данных параметра:  List&ltBinaryOpNode&gt</li>
-     <li>_right_leaf - правое поддерево узла. Тип данных параметра:  List&ltBinaryOpNode&gt</li>
-  </ul>
-  </p>
-    <li><p>AST:</p></li>
-<img align="center" width="1165" height="336" alt="image" src="https://github.com/user-attachments/assets/56824d13-f5f4-4e37-9628-9bf53cb68b89" />
-    <li><p>Вывод Ast в прорамме:</p></li>
-  <img align="center" width="826" height="738" alt="image" src="https://github.com/user-attachments/assets/2bc204ec-44d5-4974-8435-6c330237caac" />
-</ul> 
-<h3 align="center"> Тестовые примеры </h3>
+<h3  align="center"> Классификация грамматики по Хомскому: контекстно-свободная грамматика:</h3>
+A -> α, A ∊ VN, α ∊ V*
 
-<p><img align="center" width="1114" height="894" alt="image" src="https://github.com/user-attachments/assets/72aa1a27-8249-4840-b5e8-912107d08703" /></p>
+<h3  align="center"> Примеры правильных входных строк</h3>
+<br>a + b * c / 2 - q % (d + 2) - q
+<br>a + b * c + d - r
+<br>123 + (144 % 78 * (53 / 2))
 
-<img align="center" width="1903" height="314" alt="image" src="https://github.com/user-attachments/assets/727d1099-b7b9-455c-88bc-9e7b28c5ebaa" />
+<h3  align="center"> Лексические и сентаксические ошибки</h3>
+<img width="1918" height="727" alt="image" align="center" src="https://github.com/user-attachments/assets/646055c3-ec6a-49f2-bf54-5ca280e3224e" />
+<p align="center"> Рисунок 1 - Прмиер корректной строки </p>
+<img width="1403" height="505" alt="image" align="center" src="https://github.com/user-attachments/assets/4b040683-b392-401a-bb61-095716f07546" />
+<p align="center"> Рисунок 2 - Прмиер  строки c недоспустимыми символами </p>
+<img width="1385" height="427" alt="image"  align="center" src="https://github.com/user-attachments/assets/effc5de2-1d0f-41ab-b868-3f1dc9f5acd3" />
+<p align="center"> Рисунок 3 - Прмиер  строки с некоррутной структурой </p>
+
+
+<h3  align="center"> Тетрады </h3>
+<img width="1400" height="271" alt="image" align="center" src="https://github.com/user-attachments/assets/7188c92a-666d-4642-bcdd-53bbfac48f7c" />
+<p align="center"> Рисунок 4 - Таблица тетрад </p>
+
+<h3  align="center"> Полис </h3>
+<img width="974" height="203" alt="image"  align="center" src="https://github.com/user-attachments/assets/2662ca72-bc9d-4daf-9070-f5e24fe72602" />
+<p align="center"> Рисунок 5 - Полис для выражения  123 + (144 % 78 * (53 / 2))</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
