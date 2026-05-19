@@ -81,6 +81,7 @@ namespace фапра.Sem_tree
         private List<string> POLIS_to_INVERS(List<string> arirh_op_polis) 
         {
             List<string> right_order = new List<string>();
+            int can_enum = 1;
             for (int i = 0; i < arirh_op_polis.Count; i++)
             {
                 string cur = arirh_op_polis[i];
@@ -94,38 +95,45 @@ namespace фапра.Sem_tree
                     //    errors.addError($"Используется не объявленный идентификатор: " + left, -1, 0, get_pos(left));
                     if (right == "SOS" && left != "SOS")
                     {
-                        if (int.TryParse(left, out int result))
+                        if (int.TryParse(left, out int result) && can_enum == 1)
                         {
                             right_order.Add(cur + " " + left + " #" + Convert.ToString(right_order.Count - 1) + " ");
                             right_order[right_order.Count - 1] += oper_res(right_order);
                         }
                         else
-                        right_order.Add(cur + " " + left + " #" + Convert.ToString(right_order.Count - 1));
+                        {
+                            right_order.Add(cur + " " + left + " #" + Convert.ToString(right_order.Count - 1));
+                            can_enum = 0;
+                        }
                     }
-                    else if (right != "SOS" && left == "SOS")
+                    else if (right != "SOS" && left == "SOS" )
                     {
-                        if (int.TryParse(right, out int result))
+                        if (int.TryParse(right, out int result) && can_enum == 1)
                         {
                             right_order.Add(cur + " #" + Convert.ToString(right_order.Count - 1) + " " + right + " ");
                             right_order[right_order.Count - 1] += oper_res(right_order);
                         }
                         else
-                        right_order.Add(cur + " #" + Convert.ToString(right_order.Count - 1) + " " + right);
+                        {
+                            right_order.Add(cur + " #" + Convert.ToString(right_order.Count - 1) + " " + right);
+                            can_enum = 0;
+                        }
                     }
                     else if (right == "SOS" && left == "SOS")
                     {
                         right_order.Add(cur + " #" + Convert.ToString(right_order.Count - 2) + " #" + Convert.ToString(right_order.Count - 1) + " ");
-                        right_order[right_order.Count - 1] += oper_res(right_order);
+                        if (can_enum == 1) right_order[right_order.Count - 1] += oper_res(right_order);
                     }
                     else
                     {
-                        if (int.TryParse(left, out int result3) && int.TryParse(right, out int result4))
+                        if (int.TryParse(left, out int result3) && int.TryParse(right, out int result4) && can_enum == 1)
                         {
                             right_order.Add(cur + " " + left + " " + right + " " + action(right_order,left,right,cur[0]));
                         }
                         else
                         {
                             right_order.Add(cur + " " + left + " " + right);
+                            can_enum = 0;
                         }
                     }
                     arirh_op_polis.RemoveAt(i - 1);

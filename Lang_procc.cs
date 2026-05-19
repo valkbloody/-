@@ -236,14 +236,16 @@ namespace фапра
                     error_grid.Rows.Add(parser.Errors.line[i], "синтаксическая ошибка", parser.Errors.path[i], parser.Errors.message[i]);
                 }
                 AstBuilder astBuilder = new AstBuilder();
-                List<string> tree = astBuilder.Get_Result(lixemas, parser.arith_opes);
+                if (error_grid.Rows.Count == 0)  polis(parser.arith_opes);
+                 List<string> tree = astBuilder.Get_Result(lixemas, parser.arith_opes);
                 toolStripStatusLabel3.Text = "Количество ошибок: " + error_grid.Rows.Count;
                 if (errors[selpage].column.Count == 0)
                 {
                     for (int i = 0; i < tree.Count; i++)
                     {
                         string[] splitt = tree[i].Split(' ');
-                        error_grid.Rows.Add(i, "тетрада", splitt[1] + splitt[0] + splitt[2], splitt[3]);
+                        if (splitt.Count() == 3) error_grid.Rows.Add(i, "тетрада", splitt[0] + " " + splitt[1] + " " + splitt[2], "");
+                        else  error_grid.Rows.Add(i, "тетрада", splitt[0] + " " + splitt[1] + " " + splitt[2], "Результат: "+splitt[3]);
                     }
                 }
                 foreach (Lexema lexema in lixemas)
@@ -257,18 +259,18 @@ namespace фапра
                 MessageBox.Show(ex.Message);
             }
         }
-        private void tree_ast(List<string> tree)
+        private void polis(List<string> polka)
         {
             Form ast_tree = new Form();
             ast_tree.Size = new System.Drawing.Size(1000, 1000);
-            ast_tree.Text = "Дерево";
+            ast_tree.Text = "ПОЛИС";
             RichTextBox info = new RichTextBox();
             info.Font = toolStripStatusLabel1.Font;
             info.Size = new System.Drawing.Size(1000 - 100, 1000 - 100);
             info.Location = new Point(50, 50);
-            foreach (string twig in tree)
+            foreach (string twig in polka)
             {
-                info.Text += twig + Environment.NewLine;
+                info.Text += twig + " ";
             }
             ast_tree.Controls.Add(info);
             ast_tree.ShowDialog();
