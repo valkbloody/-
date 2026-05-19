@@ -148,7 +148,7 @@ namespace фапра
                         addError(buf, curr_line);
                         clearbuf();
                         getNext();
-                        cur_state = States.S;
+                        if (cur_state != States.FIN) cur_state = States.S;
                         break;
                     case States.FIN:
                         break;
